@@ -1,0 +1,140 @@
+//
+//  PrefixHeader.pch
+//  CardBao
+//
+//  Created by zhangmingheng on 2018/7/16.
+//  Copyright © 2018 andy_zhang. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+//************************** 引入常用的头文件 Start **************************//
+#import "AppDelegate.h"
+// 每个ViewController 的基类
+#import "BaseViewController.h"
+// 帮助文件
+#import "Helper.h"
+// layout布局
+#import <Masonry.h>
+// 列表刷新
+#import <MJRefresh.h>
+// 腾讯bugly
+#import <Bugly/Bugly.h>
+//  AFN 网络请求
+#import <AFNetworking.h>
+// 网络请求管理
+#import "RequestManager.h"
+// 网络图片
+#import <UIImageView+WebCache.h>
+#import <UIButton+WebCache.h>
+// model
+#import <YYModel.h>
+//// 拍照、选择相册框架
+#import <ZLPhotoActionSheet.h>
+#import <ZLDefine.h>
+// pickerView 支持多行数据选择
+#import <ZJPickerView.h>
+
+//************************** 引入常用的头文件 End **************************//
+
+//************************** 网络接口 Start **************************//
+// 生产服务器
+
+//#define Host_And_Port @"https://danyu.szfeiben.com/mobile/"
+
+// 测试服务器
+#define Host_And_Port @"http://114.215.78.33:8089/api/finance/"
+
+// 开发环境
+
+// 登录注册
+// 注册登录获取验证码
+#define GETCODE_INTERFACE Host_And_Port@"user/auth/code"
+// 注册
+#define REGISTER_INTERFACE Host_And_Port@"user/register"
+// 登录
+#define LOGIN_INTERFACE Host_And_Port@"user/login"
+// 验证码登录
+#define CODELOGIN_INTERFACE Host_And_Port@"user/loginSms"
+
+// 借款首页
+#define BASEINFO_INTERFACE Host_And_Port@"user/base/info"
+
+// 授信流程接口
+// 创建授信订单接口
+#define CREATECREDITORDER_INTERFACE Host_And_Port@"credit/create"
+
+// 申请借款接口
+// 放款 获取验证码
+#define LOANGETCODE_INTERFACE Host_And_Port@"loan/msg"
+
+//还款接口
+
+
+//************************** 网络接口 End **************************//
+
+//************************** 常量 Start **************************//
+// 颜色
+#define DYGrayColor(value) [UIColor colorWithRed:value/255.0 green:value/255.0 blue:value/255.0 alpha:1]
+#define DYColor(value1,value2,value3) [UIColor colorWithRed:value1/255.0 green:value2/255.0 blue:value3/255.0 alpha:1]
+#define HomeColor [UIColor colorWithRed:118.0/255.0 green:113/255.0 blue:237/255.0 alpha:1]
+// 字体大小
+#define DYFontSize(size) ([UIFont systemFontOfSize:size])
+#define DYNormalFont [UIFont systemFontOfSize:15]
+// 屏幕宽高
+#define screenWidth [UIScreen mainScreen].bounds.size.width
+#define screenHeight [UIScreen mainScreen].bounds.size.height
+// 屏幕bounces
+#define MainScreen [UIScreen mainScreen]
+// 比例宏
+#define DYCalculate(size) (size / 375.0 * screenWidth)
+#define DYCalculateHeigh(size) (size / 667.0 * screenHeight)
+// buglyID
+#define BUGLYAPPID @"123456"
+// 产品编号
+#define PRODUCTNO @"1233455"
+
+//************************** 常量 End **************************//
+
+//************************** 用户信息 Start **************************//
+
+//存储信息管理者
+#define kUserDefaults [NSUserDefaults standardUserDefaults]
+//  主接口
+#define INPUTINTERFACE(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"INTERFACEMAIN"]
+#define kINTERFACE [kUserDefaults stringForKey:@"INTERFACEMAIN"]
+// 登录状态 @"LoginState"
+#define INPUTLoginState(value) [kUserDefaults setBool:value forKey:@"LoginState"]
+#define kLoginStatus [kUserDefaults boolForKey:@"LoginState"]
+
+// 用户token
+#define INPUTTOKEN(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"TOKEN"]
+#define kTOKEN [kUserDefaults stringForKey:@"TOKEN"]
+
+// 授信编号 creditNo
+#define INPUTCREDITNO(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"CREDITNO"]
+#define kCREDITNO [kUserDefaults stringForKey:@"CREDITNO"]
+
+// 用户ID
+#define INPUTUserID(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"USERID"]
+#define kUserID [kUserDefaults stringForKey:@"USERID"]
+// 用户手机号
+#define INPUTUserPHONE(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"USERPHONE"]
+#define kUserPHONE [kUserDefaults stringForKey:@"USERPHONE"]
+
+// 用户昵称
+#define INPUTNickname(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"NICKNAMWE"]
+#define kNickname [kUserDefaults stringForKey:@"NICKNAMWE"]
+
+// 用户头像
+#define INPUTUserPhoto(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"USERPHOTO"]
+#define kUserPhoto [kUserDefaults stringForKey:@"USERPHOTO"]
+
+
+//************************** 用户信息 End **************************//
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* PrefixHeader_pch */

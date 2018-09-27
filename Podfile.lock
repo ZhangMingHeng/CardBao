@@ -1,0 +1,77 @@
+PODS:
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
+    - AFNetworking/NSURLSession
+  - Bugly (2.5.0)
+  - GPUImage (0.1.7)
+  - IQKeyboardManager (6.1.0)
+  - Masonry (1.1.0)
+  - MBProgressHUD (1.1.0)
+  - MJRefresh (3.1.15.3)
+  - SDWebImage (4.4.1):
+    - SDWebImage/Core (= 4.4.1)
+  - SDWebImage/Core (4.4.1)
+  - YJBannerView (2.4.0)
+  - YYModel (1.0.4)
+  - ZJPickerView (1.0.1)
+  - ZLPhotoBrowser (2.7.3):
+    - GPUImage
+    - SDWebImage
+
+DEPENDENCIES:
+  - AFNetworking
+  - Bugly
+  - IQKeyboardManager
+  - Masonry
+  - MBProgressHUD
+  - MJRefresh
+  - SDWebImage
+  - YJBannerView
+  - YYModel
+  - ZJPickerView
+  - ZLPhotoBrowser
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - Bugly
+    - GPUImage
+    - IQKeyboardManager
+    - Masonry
+    - MBProgressHUD
+    - MJRefresh
+    - SDWebImage
+    - YJBannerView
+    - YYModel
+    - ZJPickerView
+    - ZLPhotoBrowser
+
+SPEC CHECKSUMS:
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
+  GPUImage: 733a5f0fab92df9de1c37ba9df520a833ccb406d
+  IQKeyboardManager: f520b0f411eaefa08058532cb50c48bfeffa8535
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
+  MJRefresh: b48380ae2b927b46c4ef000de9adb8dc748e1df7
+  SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
+  YJBannerView: 0c81b7bda592cd23b10ceae8f53c514dcd77e4c6
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+  ZJPickerView: b4476cc83c99e1826292f17e84ad15cc1394c697
+  ZLPhotoBrowser: 8a2c8402ac36c398f7729876fb9e5171f8efceff
+
+PODFILE CHECKSUM: 93948cbfb62e78d11f6821286a21727c0d709771
+
+COCOAPODS: 1.5.3
