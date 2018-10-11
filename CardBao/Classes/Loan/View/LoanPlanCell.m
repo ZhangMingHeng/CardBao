@@ -26,6 +26,7 @@
     [self.dataLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(15);
         make.top.equalTo(self.contentView).offset(10);
+        make.bottom.equalTo(self.contentView).offset(-10);
         make.width.mas_lessThanOrEqualTo(screenWidth/2.0);
     }];
     [self.moneyLabel mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -73,12 +73,12 @@
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     RepaymentListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"RepaymentListCell"];
-    cell.selectionStyle     = UITableViewCellSelectionStyleNone;
-    cell.moneyLabel.text    = @"¥500.00";
-    cell.monthLabel.text    = @"4个月";
-    cell.dateLabel.text     = @"2018-09-09";
-    cell.codeLabel.text     = @"卡宝1254531";
-    cell.button.tag         = indexPath.row;
+    cell.selectionStyle            = UITableViewCellSelectionStyleNone;
+    cell.moneyLabel.attributedText = [self setAttributedStringColor: @"本期应还(元)\n¥ 500.00" range:NSMakeRange(0, 7)];
+    cell.monthLabel.text           = @"借款期限：4个月";
+    cell.dateLabel.text            = @"最近还款日：2018-09-09";
+    cell.codeLabel.text            = @"卡宝1254531";
+    cell.button.tag                = indexPath.row;
     
     if (_RepaymentState == NSRepaymentStateInRepayment) {
         [cell.button addTarget:self action:@selector(repaymentClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -86,7 +86,7 @@
         [cell.button setTitle:@"立即还款" forState:UIControlStateNormal];
     } else {
         [cell.button setTitle:@"已结清" forState:UIControlStateNormal];
-        [cell.button setBackgroundColor:[UIColor lightGrayColor]];
+        [cell.button setTitleColor:DYGrayColor(161.0) forState:UIControlStateNormal];
     }
     return cell;
 }
@@ -94,6 +94,16 @@
 -(void)repaymentClick:(UIButton*)sender {
     RepaymentDetailsVC *detailsVC = [RepaymentDetailsVC new];
     [self.navigationController pushViewController:detailsVC animated:YES];
+}
+// 颜色、行距富文本、字体大小
+-(NSMutableAttributedString*)setAttributedStringColor:(NSString*) string range:(NSRange)range{
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.lineSpacing = 8;
+    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:DYGrayColor(161) range:range];
+    [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:12.0] range:range];
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, string.length)];
+    return attributedString;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

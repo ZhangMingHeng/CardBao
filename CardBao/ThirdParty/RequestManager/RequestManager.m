@@ -36,6 +36,8 @@
 //        success：成功回调
 //        faile：失败的回调
     //   isCache: 是否缓存 默认NO
+
+    
     BLYLogInfo(@"\n\n请求前Url:\n%@ \nparameters:\n%@\n\n",urlString,parameters);
     
     [Helper removeAlertMessage]; // 移除气泡
@@ -69,6 +71,14 @@
     httpManager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 返回的数据格式
     //   httpManager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html",@"text/plain", nil];
     httpManager.requestSerializer.timeoutInterval = 20.0; // 请求时长
+    
+    // 设置header
+    if (![[Helper isNullToString:kTOKEN returnString:@""] isEqualToString:@""] ) {
+        [httpManager.requestSerializer setValue:kTOKEN forHTTPHeaderField:@"token"];
+        [httpManager.requestSerializer setValue:kUserPHONE forHTTPHeaderField:@"account"];
+    }
+    
+    
     // 请求
     NSURLSessionDataTask *task = [httpManager POST:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         // 成功
@@ -113,10 +123,16 @@
 -(NSURLSessionDataTask*_Nonnull)upLoadPostWithUR:(NSString*_Nonnull) urlString parameters:(id _Nullable )parameters andWithSuccess:(httpRequestSuccsess _Nonnull )success andWithFaile:(httpRequestFaile _Nonnull )faile{
     // 请求管理者
     AFHTTPSessionManager *httpManager = [AFHTTPSessionManager manager];
-//    httpManager.requestSerializer = [AFJSONRequestSerializer serializer]; // Json 请求格式
     httpManager.responseSerializer = [AFHTTPResponseSerializer serializer]; // 返回的数据格式
-    NSURLSessionDataTask *task = [httpManager POST:urlString parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-//        数组形式传参
+    
+    // 设置header
+    if (![[Helper isNullToString:kTOKEN returnString:@""] isEqualToString:@""] ) {
+        [httpManager.requestSerializer setValue:kTOKEN forHTTPHeaderField:@"token"];
+        [httpManager.requestSerializer setValue:kUserPHONE forHTTPHeaderField:@"account"];
+    }
+    
+    NSURLSessionDataTask *task = [httpManager POST:urlString parameters:@{@"imageType":kIMAGETYPE} constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        // 数组形式传参
         if ([parameters isKindOfClass:[NSArray class]]) {
             NSArray *imageArray = parameters;
             if (imageArray.count>0) {
@@ -130,28 +146,12 @@
             }
             return ;
         }
-//               单张image形式传参
-        if ([parameters isKindOfClass:[UIImage class]]){
-            NSData *data = UIImageJPEGRepresentation(parameters, 0.3);//UIImagePNGRepresentation(image);
-            //文件上传时不允许被覆盖或文件重名,所以在上传时使用当前系统时间作为文件名
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            formatter.dateFormat = @"yyyyMMddHHmmssSSSS";//设置时间格式
-            NSString *str = [formatter stringFromDate:[NSDate date]];
-            NSString *fileName = [NSString stringWithFormat:@"%@.png", str];
-            
-            //参数1:上传的二进制；参数2:服务器上传标识字段，由后台指定；参数3:上传的文件名；参数4:上传格式
-            [formData appendPartWithFileData:data
-                                        name:@"file"
-                                    fileName:fileName
-                                    mimeType:@"image/png"];
-        }
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
         BLYLogInfo(@"单张图片上传成功: %@", dic);
         success(self,dic);
-        
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         BLYLogInfo(@"单张图片上传失败: %@", error);
         faile(self,error);

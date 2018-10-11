@@ -9,6 +9,7 @@
 #import "LoanVC.h"
 #import "LoanModel.h"
 #import "ApplyLoanVC.h"
+#import <YJBannerView.h>
 #import "TextLoopView.h"
 #import "CreditExtensionMainVC.h"
 
@@ -27,7 +28,7 @@ static int const BusinessStateAuthTimeout      = 8; // 授权超时
 static int const BusinessStateAuthSuccess      = 9; // 授权成功
 
 
-@interface LoanVC ()<UITableViewDelegate,UITableViewDataSource>
+@interface LoanVC ()<UITableViewDelegate,UITableViewDataSource,YJBannerViewDataSource, YJBannerViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) LoanModel *loanModel;
@@ -43,20 +44,19 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
 }
 #pragma mark requestData
 -(void)requestData:(BOOL)loading {
-    
-    [[RequestManager shareInstance]postWithURL:BASEINFO_INTERFACE parameters:nil isLoading:loading loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+    // account:用户账号\手机号码
+    [[RequestManager shareInstance]postWithURL:BASEINFO_INTERFACE parameters:@{@"account":kUserPHONE} isLoading:loading loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
         [self.tableView.mj_header endRefreshing];
-        NSDictionary *dic = @{@"step":@1,@"maxCredit":@"50000",@"availableCredit":@"1099"};
-        if ([Helper justDictionary:dic]) {
-            self->_loanModel = [LoanModel yy_modelWithDictionary:dic];
+        if ([Helper justDictionary:model]) {
+            self->_loanModel = [LoanModel yy_modelWithDictionary:model];
         }
      
         [self.tableView reloadData];
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
+        [self.tableView.mj_header endRefreshing];
     } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
+        [self.tableView.mj_header endRefreshing];
     } isCache:YES];
 }
 #pragma mark getUI
@@ -65,94 +65,91 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
     //  viewcontroller 不会被tabbar遮挡
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
-    
-    // 喇叭位置
-    UIView *headView = [UIView new];
-    [self.view addSubview:headView];
-    UILabel *lineLabel        = [UILabel new];
-    UIImageView *img          = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Loan_horn"]];
-    lineLabel.backgroundColor = DYColor(173, 170, 244);
-    [headView addSubview:lineLabel];
-    [headView addSubview:img];
-    TextLoopView *loopView = [TextLoopView textLoopViewWith:loopText loopInterval:5 initWithFrame:CGRectMake(35, 0, screenWidth-40, 44) selectBlock:^(NSString *selectString, NSInteger index) {
-        
-    }];
-    [headView addSubview:loopView];
-    
-    
     // tableView
     _tableView    = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
     _tableView.tableFooterView = [UIView new];
     _tableView.delegate        = self;
     _tableView.dataSource      = self;
     _tableView.showsVerticalScrollIndicator = NO;
+    _tableView.separatorStyle  = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:_tableView];
     
-    
     // 布局
-    [headView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.top.right.equalTo(self.view);
-        make.height.mas_equalTo(45);
-    }];
-    [img mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(headView).offset(10);
-        make.centerY.equalTo(headView).offset(-1);
-        make.height.width.mas_equalTo(20);
-    }];
-    [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(headView);
-        make.height.mas_equalTo(1);
-        make.left.equalTo(headView).offset(10);
-        make.right.equalTo(headView).offset(-10);
-    }];
     [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(headView.mas_bottom);
-        make.left.bottom.right.equalTo(self.view);
+        make.edges.mas_offset(UIEdgeInsetsZero);
     }];
-    
-    
     _tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [self requestData:NO];
     }];
-
 }
 #pragma mark TableView protocol
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 1;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return CGRectGetHeight(tableView.frame);
+    return 600-226+DYCalculate(226);
 }
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *idF = @"CELL";
     UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:idF];
     cell.selectionStyle   = UITableViewCellSelectionStyleNone;
-    cell.separatorInset   = UIEdgeInsetsZero;
+    // banner
+    YJBannerView *bannerView = [YJBannerView bannerViewWithFrame:CGRectMake(0, 0, screenWidth, 86) dataSource:self delegate:self emptyImage:nil placeholderImage:nil selectorString:nil];
+    [cell.contentView addSubview:bannerView];
+    bannerView.pageControlHighlightColor = HomeColor;
+    [bannerView reloadData];
+    
+    // 喇叭位置
+    UIView *headView         = [UIView new];
+    headView.backgroundColor = DYGrayColor(239);
+    UIImageView *img         = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Loan_horn"]];
+    [headView addSubview:img];
+    [cell.contentView addSubview:headView];
+    TextLoopView *loopView = [TextLoopView textLoopViewWith:loopText loopInterval:3 initWithFrame:CGRectMake(35, 0, screenWidth-40, 35) selectBlock:^(NSString *selectString, NSInteger index) {
+        
+    }];
+    [headView addSubview:loopView];
+    [headView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(cell.contentView);
+        make.top.equalTo(cell.contentView).offset(86);
+        make.height.mas_equalTo(35);
+    }];
+    [img mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(headView).offset(10);
+        make.centerY.equalTo(headView).offset(-1);
+        make.height.width.mas_equalTo(20);
+    }];
+    [cell.contentView addSubview:headView];
+    
     
     [self getCell:cell];// UI
     
+    
     return cell;
 }
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    // 禁止上滑
-    CGPoint offset = scrollView.contentOffset;
-    if (offset.y > 0) {
-        offset.y = 0;
-    }
-    scrollView.contentOffset = offset;
-}
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+//    // 禁止上滑
+//    CGPoint offset = scrollView.contentOffset;
+//    if (offset.y > 0) {
+//        offset.y = 0;
+//    }
+//    scrollView.contentOffset = offset;
+//}
 -(void)getCell:(UITableViewCell*)cell {
     
     // 额度状态
     UIButton *limitLabel                = [UIButton new];
-    limitLabel.titleLabel.numberOfLines = 2;
+    limitLabel.titleLabel.numberOfLines = 3;
     limitLabel.userInteractionEnabled   = NO;
     limitLabel.titleLabel.font          = DYNormalFont;
     limitLabel.titleLabel.textAlignment = NSTextAlignmentCenter;
-    [limitLabel setTitle:@"最高授信额度\n5000元" forState:UIControlStateNormal];
+    limitLabel.titleLabel.font          = [UIFont systemFontOfSize:24.0 weight:0.9];
+    [limitLabel setTitle:@"\n最高授信额度\n50,000元" forState:UIControlStateNormal];
+    [limitLabel setTitleColor:DYColor(0.0, 145.0, 234.0) forState:UIControlStateNormal];
     [limitLabel setBackgroundImage:[UIImage imageNamed:@"Loan_Background"] forState:UIControlStateNormal];
     [cell.contentView addSubview:limitLabel];
+    
     
     // 备注
     UILabel *remarkLabel      = [UILabel new];
@@ -173,19 +170,20 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
     
     // 布局
     [limitLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.width.height.mas_equalTo(DYCalculate(247));
         make.centerX.equalTo(cell.contentView);
-        make.top.equalTo(cell.contentView).offset(DYCalculate(50));
+        make.width.mas_equalTo(DYCalculate(261));
+        make.height.mas_equalTo(DYCalculate(226));
+        make.top.equalTo(cell.contentView).offset(DYCalculate(35+86+20));
     }];
     [remarkLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(limitLabel.mas_bottom).offset(20);
         make.centerX.equalTo(cell.contentView);
+        make.top.equalTo(limitLabel.mas_bottom).offset(40);
     }];
     [button mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(cell.contentView).offset(25);
-        make.right.equalTo(cell.contentView).offset(-25);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(remarkLabel.mas_bottom).offset(DYCalculate(50));
+        make.height.mas_equalTo(45);
+        make.left.equalTo(cell.contentView).offset(37);
+        make.right.equalTo(cell.contentView).offset(-37);
+        make.top.equalTo(remarkLabel.mas_bottom).offset(DYCalculate(40));
     }];
     
     switch (self.loanModel.step) {
@@ -193,7 +191,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         {
             // 额度计算中
 //            limitLabel.text  = @"额度计算中...";
-            [limitLabel setTitle:@"额度计算中..." forState:UIControlStateNormal];
+            [limitLabel setTitle:@"\n额度计算中..." forState:UIControlStateNormal];
             remarkLabel.text = @"额度计算完成后，会短信通知您，请耐心等待。";
             button.enabled   = NO;
             [button setTitle:@"额度计算中" forState:UIControlStateNormal];
@@ -203,7 +201,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         {
             // 评分不足
 //            limitLabel.text  = @"综合评分不足";
-            [limitLabel setTitle:@"综合评分不足" forState:UIControlStateNormal];
+            [limitLabel setTitle:@"\n综合评分不足" forState:UIControlStateNormal];
             remarkLabel.text = @"请2018年10月11号后再来申请额度。";
             button.enabled   = NO;
             [button setTitle:@"综合评分不足" forState:UIControlStateNormal];
@@ -213,7 +211,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         {
             // 授权超时
 //            limitLabel.text  = @"授信额度超时\n请重新获取";
-            [limitLabel setTitle:@"授信额度超时\n请重新获取" forState:UIControlStateNormal];
+            [limitLabel setTitle:@"\n授信额度超时\n请重新获取" forState:UIControlStateNormal];
             remarkLabel.text = @"";
             [button setTitle:@"重新获取额度" forState:UIControlStateNormal];
         }
@@ -222,7 +220,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         {
             // 授权成功
 //            limitLabel.text  = [NSString stringWithFormat:@"可用额度\n%@元",self.loanModel.availableCredit];
-            [limitLabel setTitle:[NSString stringWithFormat:@"可用额度\n%@元",self.loanModel.availableCredit] forState:UIControlStateNormal];
+            [limitLabel setTitle:[NSString stringWithFormat:@"\n可用额度\n%@元",self.loanModel.availableCredit] forState:UIControlStateNormal];
             remarkLabel.text = [NSString stringWithFormat:@"总额度%@元",self.loanModel.maxCredit];
             [button setTitle:@"立即借款" forState:UIControlStateNormal];
         }
@@ -302,25 +300,31 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
 -(void)getCreditNo:(CreditExtensionMainVC*) creditVC{
     // 授信流程视图
     
-    NSDictionary *parameters = @{@"prodSubNo":PRODUCTNO,@"openId":@""};
-    [[RequestManager shareInstance]postWithURL:CREATECREDITORDER_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        NSDictionary *dic = model;
-        if ([Helper justDictionary:dic]) {
-            
+//    NSDictionary *parameters = @{@"prodSubNo":PRODUCTNO,@"openId":@""};
+//    [[RequestManager shareInstance]postWithURL:CREATECREDITORDER_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+//        NSDictionary *dic = model;
+//        if ([Helper justDictionary:dic]) {
+    
             // 存储授信编号
-            INPUTCREDITNO(dic[@"creditNo"]);
-            
+//            INPUTCREDITNO(dic[@"creditNo"]);
+    
             creditVC.creditNo = [Helper isNullToString:kCREDITNO returnString:@""];
             creditVC.viewPush = CreditViewPushIdentity;
             [self.navigationController pushViewController:creditVC animated:YES];
             
-        }
+//        }
         
-    } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
-    } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
-    } isCache:nil];
+//    } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+//
+//    } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+//
+//    } isCache:NO];
+}
+
+#pragma mark @protocol YJBannerViewDataSource
+- (NSArray *)bannerViewImages:(YJBannerView *)bannerView {
+    
+    return @[@"Loan_banner",@"Loan_banner1",@"Loan_banner2"];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

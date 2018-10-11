@@ -76,8 +76,8 @@
     }];
     [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(40);
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
+        make.left.equalTo(self.view).offset(37);
+        make.right.equalTo(self.view).offset(-37);
         make.bottom.equalTo(self.view).offset(-100);
     }];
 }

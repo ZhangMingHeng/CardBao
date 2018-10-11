@@ -27,10 +27,11 @@
     UIButton *limitLabel                = [UIButton new];
     limitLabel.titleLabel.numberOfLines = 2;
     limitLabel.userInteractionEnabled   = NO;
-    limitLabel.titleLabel.font          = DYNormalFont;
+    limitLabel.titleLabel.font          = [UIFont boldSystemFontOfSize:24.0];
     limitLabel.titleLabel.textAlignment = NSTextAlignmentCenter;
+    [limitLabel setTitleColor:HomeColor forState:UIControlStateNormal];
     [limitLabel setTitle:@"额度计算中..." forState:UIControlStateNormal];
-    [limitLabel setBackgroundImage:[UIImage imageNamed:@"Loan_Background"] forState:UIControlStateNormal];
+    [limitLabel setBackgroundImage:[UIImage imageNamed:@"Credit_success"] forState:UIControlStateNormal];
     [self.view addSubview:limitLabel];
     
     // detail
@@ -50,20 +51,20 @@
     
     // 布局
     [limitLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.width.height.mas_equalTo(DYCalculate(200));
+        make.width.height.mas_equalTo(DYCalculate(258));
         make.centerX.equalTo(self.view);
-        make.top.equalTo(self.view).offset(DYCalculateHeigh(100));
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(50));
     }];
     [detailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view).offset(20);
         make.right.equalTo(self.view).offset(-20);
         make.centerX.equalTo(self.view);
-        make.top.equalTo(limitLabel.mas_bottom).offset(DYCalculateHeigh(60));
+        make.top.equalTo(limitLabel.mas_bottom).offset(DYCalculateHeigh(50));
     }];
     [backButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.height.mas_equalTo(40);
+        make.left.equalTo(self.view).offset(37);
+        make.right.equalTo(self.view).offset(-37);
+        make.height.mas_equalTo(45);
         make.top.equalTo(detailLabel.mas_bottom).offset(50);
     }];
 }

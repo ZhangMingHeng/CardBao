@@ -56,10 +56,10 @@
         make.top.equalTo(img.mas_bottom).offset(80);
     }];
     [accessButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(40);
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.bottom.equalTo(self.view).offset(-50);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(self.view).offset(37);
+        make.right.equalTo(self.view).offset(-37);
+        make.bottom.equalTo(self.view).offset(-60);
     }];
 }
 #pragma mark 授权访问

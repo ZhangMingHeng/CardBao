@@ -27,17 +27,17 @@
 -(void)getUI {
     [self.navigationItem setTitle:@"还款计划"];
     
-    // 还款总额
-    moneyLabel           = [UILabel new];
-    moneyLabel.text      = [NSString stringWithFormat:@"还款总额：¥54000.00"];
-    moneyLabel.textColor = HomeColor;
-    moneyLabel.font      = [UIFont systemFontOfSize:18];
-    [self.view addSubview:moneyLabel];
-    UILabel *lineLabel        = [UILabel new];
-    lineLabel.backgroundColor = DYGrayColor(243);
-    [self.view addSubview:lineLabel];
-    
-    
+    // 背景
+    UIImageView *headerImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_backgroundHeader"]];
+    headerImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:headerImg];
+    // 文字
+    UILabel *payLabel       = [UILabel new];
+    payLabel.textColor      = [UIColor whiteColor];
+    payLabel.textAlignment  = NSTextAlignmentCenter;
+    payLabel.numberOfLines  = 0;
+    payLabel.attributedText = [self setAttributeStringFont:@"还款总额(元)\n¥ 50000"];
+    [headerImg addSubview:payLabel];
     
     // tableView
     listTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -50,18 +50,15 @@
     [self.view addSubview:listTableView];
     
     //布局
-    [moneyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.top.equalTo(self.view);
-        make.left.equalTo(self.view).offset(15);
-        make.height.mas_equalTo(50);
+    [headerImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(self.view);
+        make.height.mas_equalTo(DYCalculateHeigh(99));
     }];
-    [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.left.equalTo(self.view);
-        make.bottom.equalTo(self->moneyLabel);
-        make.height.mas_equalTo(1);
+    [payLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(headerImg);
     }];
     [listTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_offset(UIEdgeInsetsMake(50, 0, 0, 0));
+        make.edges.mas_offset(UIEdgeInsetsMake(DYCalculateHeigh(99), 0, 0, 0));
     }];
     
 }
@@ -84,11 +81,28 @@
     cell.selectionStyle          = UITableViewCellSelectionStyleNone;
     cell.dataLabel.text          = @"2018年3月26号";
     cell.moneyLabel.text         = @"¥347794.00";
+    cell.moneyLabel.textColor    = DYColor(42.0, 113.0, 241.0);
     cell.describeLabel.text      = @"含本金3500.00+利息460.00";
-    cell.describeLabel.textColor = HomeColor;
+    cell.describeLabel.textColor = DYGrayColor(161.0);
     cell.describeLabel.font      = DYNormalFont;
     
     return cell;
+}
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    // 禁止下滑
+    CGPoint offset = scrollView.contentOffset;
+    if (offset.y < 0) {
+        offset.y = 0;
+    }
+    scrollView.contentOffset = offset;
+}
+// 字体大小富文本
+-(NSMutableAttributedString*)setAttributeStringFont:(NSString*)string {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    dic[NSFontAttributeName] = [UIFont systemFontOfSize:25];
+    [attributedString addAttributes:dic range:NSMakeRange(7, string.length-7)];
+    return attributedString;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

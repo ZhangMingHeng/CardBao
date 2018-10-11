@@ -41,7 +41,7 @@
     [self setupAlertView];
 }
 - (void)setupAlertView {
-    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(40, DYCalculateHeigh(160), WIDTH-80, 320)];
+    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(20, DYCalculateHeigh(160), WIDTH-40, 320)];
     backView.backgroundColor    = [UIColor whiteColor];
     backView.layer.cornerRadius = 10;
     backView.clipsToBounds      = YES;

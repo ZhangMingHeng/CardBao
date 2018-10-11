@@ -28,7 +28,7 @@
     INPUTINTERFACE(Host_And_Port); //存储主接口
     
     //    判断登录状态
-    if (!kLoginStatus) {
+    if (kLoginStatus) {
         // 进入主页面
         self.window.rootViewController = [TabBarViewController new];
     } else {

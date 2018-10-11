@@ -31,16 +31,20 @@
     [self getUI];
     
 }
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 用于下一个页面的导航栏
+    self.navigationController.navigationBar.hidden = NO;
+}
 -(void) loadLocalData {
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     // app版本
     app_Version = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
     
-    localArray = @[@[@"My_feedback",@"意见反馈"],
-                   @[@"My_changePsw",@"修改密码"],
-                   @[@"My_aboutUS",@"关于我们"],
-                   @[@"My_contact",@"联系我们"],
-                   @[@"My_versionUpdate",@"版本更新"]];
+    localArray = @[@[@[@"My_feedback",@"意见反馈"],@[@"My_changePsw",@"修改密码"],
+                     @[@"My_aboutUS",@"关于我们"]],
+                   @[@[@"My_contact",@"联系我们"]],
+                   @[@[@"My_versionUpdate",@"版本更新"]]];
 }
 -(void)getUI {
     [self.navigationItem setTitle:@"设置"];
@@ -51,6 +55,7 @@
     listTableView.delegate        = self;
     listTableView.scrollEnabled   = NO;
     listTableView.tableFooterView = [UIView new];
+    listTableView.backgroundColor = DYGrayColor(239);
     [self.view addSubview:listTableView];
     
     //退出按钮
@@ -67,16 +72,20 @@
         make.edges.mas_offset(UIEdgeInsetsZero);
     }];
     [outButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.height.mas_equalTo(40);
+        make.left.equalTo(self.view).offset(37);
+        make.right.equalTo(self.view).offset(-37);
+        make.height.mas_equalTo(45);
         make.bottom.equalTo(self.view).offset(-DYCalculate(100));
     }];
     
 }
 #pragma mark TableView protocol
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return localArray.count;
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSArray *rowArray = localArray[section];
+    return rowArray.count;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 50;
@@ -84,13 +93,13 @@
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *idF = @"CELL";
     UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:idF];
-    cell.imageView.image  = [UIImage imageNamed:localArray[indexPath.row][0]];
-    cell.textLabel.text   = localArray[indexPath.row][1];
+    cell.imageView.image  = [UIImage imageNamed:localArray[indexPath.section][indexPath.row][0]];
+    cell.textLabel.text   = localArray[indexPath.section][indexPath.row][1];
     
-    if (indexPath.row < 3) cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    if (indexPath.section == 0) cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     else {
         UILabel *label = [UILabel new];
-        label.text     = indexPath.row==3?Telephone:[NSString stringWithFormat:@"V %@",app_Version];
+        label.text     = indexPath.section==1?Telephone:[NSString stringWithFormat:@"V %@",app_Version];
         [cell.contentView addSubview:label];
         
         [label mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -99,6 +108,12 @@
         }];
     }
     return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 10.0;
+}
+-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [UIView new];
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -138,7 +153,12 @@
 #pragma mark 退出事件
 -(void)outClick:(UIButton*)sender {
     // 进入登录页面
+    
+    // 置为初始值
     INPUTLoginState(NO);
+    INPUTUserPHONE(@"");
+    INPUTTOKEN(@"");
+    
     AppDelegate *app = (AppDelegate*)[UIApplication sharedApplication].delegate;
     app.navigationVC = [[DYNavigationController alloc]initWithRootViewController:[LoginVC new]];
     app.window.rootViewController = app.navigationVC;

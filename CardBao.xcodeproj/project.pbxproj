@@ -40,6 +40,7 @@
 		7D41FFEF20FED4E7000C0E66 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D41FFE920FED4E7000C0E66 /* Helper.m */; };
 		7D41FFF220FEE69B000C0E66 /* RegisterVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D41FFF120FEE69B000C0E66 /* RegisterVC.m */; };
 		7D41FFF520FF2B77000C0E66 /* CodeLoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D41FFF420FF2B77000C0E66 /* CodeLoginVC.m */; };
+		7D5795F1215DC4DB00E246F2 /* UIViewController+NavigationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5795F0215DC4DB00E246F2 /* UIViewController+NavigationView.m */; };
 		7D6FE12D21056A6D00E98996 /* FoldingSectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6FE12A21056A6D00E98996 /* FoldingSectionHeader.m */; };
 		7D6FE12E21056A6D00E98996 /* FoldingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6FE12B21056A6D00E98996 /* FoldingTableView.m */; };
 		7D6FE1312105804000E98996 /* ApplyLoanVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6FE1302105804000E98996 /* ApplyLoanVC.m */; };
@@ -138,6 +139,8 @@
 		7D41FFF420FF2B77000C0E66 /* CodeLoginVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeLoginVC.m; sourceTree = "<group>"; };
 		7D41FFFE20FF515D000C0E66 /* LoanVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoanVC.h; sourceTree = "<group>"; };
 		7D41FFFF20FF515D000C0E66 /* LoanVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoanVC.m; sourceTree = "<group>"; };
+		7D5795EF215DC4DB00E246F2 /* UIViewController+NavigationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+NavigationView.h"; sourceTree = "<group>"; };
+		7D5795F0215DC4DB00E246F2 /* UIViewController+NavigationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+NavigationView.m"; sourceTree = "<group>"; };
 		7D6FE12921056A6D00E98996 /* FoldingTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoldingTableView.h; sourceTree = "<group>"; };
 		7D6FE12A21056A6D00E98996 /* FoldingSectionHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoldingSectionHeader.m; sourceTree = "<group>"; };
 		7D6FE12B21056A6D00E98996 /* FoldingTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FoldingTableView.m; sourceTree = "<group>"; };
@@ -460,6 +463,15 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
+		7D5795E8215DC01700E246F2 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7D5795EF215DC4DB00E246F2 /* UIViewController+NavigationView.h */,
+				7D5795F0215DC4DB00E246F2 /* UIViewController+NavigationView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		7D6FE12821056A6D00E98996 /* FoldingTableVIew */ = {
 			isa = PBXGroup;
 			children = (
@@ -573,6 +585,7 @@
 			children = (
 				A10BC42920FC96AD00E0C58B /* ViewController */,
 				A10BC42A20FC96DA00E0C58B /* Models */,
+				7D5795E8215DC01700E246F2 /* View */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -804,6 +817,7 @@
 				7D71E7A121217652000BA576 /* NSString+MD5.m in Sources */,
 				7D116AB92108104E0068B1D8 /* OperatorCreditVC.m in Sources */,
 				7D6FE1482107051100E98996 /* CreditExtensionMainVC.m in Sources */,
+				7D5795F1215DC4DB00E246F2 /* UIViewController+NavigationView.m in Sources */,
 				7D3E08B02101917000261C28 /* RepaymentDetailsVC.m in Sources */,
 				7D41001021006C1D000C0E66 /* SettingVC.m in Sources */,
 				7D41FFED20FED4E7000C0E66 /* RequestManager.m in Sources */,

@@ -18,6 +18,7 @@
     UITextField *codeText;
     UIButton *codeButton;
     AppDelegate *appDele;
+    CGFloat statusHeight; // 状态栏高度
 }
 @property (nonatomic, assign) int countDown;
 @property (nonatomic, strong) NSTimer *timer;
@@ -29,11 +30,27 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     appDele = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [self getStatusHeight];
     [self getUI];
+}
+-(void)getStatusHeight {
+    CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
+    //获取导航栏的rect
+    CGRect navRect = self.navigationController.navigationBar.frame;
+    
+    statusHeight = statusRect.size.height + navRect.size.height;
 }
 #pragma mark getUI
 -(void)getUI {
     self.title = @"登 录";
+    
+    // 背景图
+    UIImageView *backgroundImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_background"]];
+    backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:backgroundImg];
+    
+    // 自定义导航栏
+    [self setNavigationViewTitle:@"登 录" hiddenBackButton:NO];
     
     // 背景框
     UIView *boardView             = [[UIView alloc] init];
@@ -43,7 +60,10 @@
     boardView.layer.shadowOffset  = CGSizeMake(1, 1);
     boardView.backgroundColor     = [UIColor whiteColor];
     [self.view addSubview:boardView];
-    
+    // logo
+    UIImageView *logoImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_logo"]];
+    logoImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [boardView addSubview:logoImg];
     // 输入框
     // 手机
     phoneText                 = [UITextField new];
@@ -57,11 +77,26 @@
     codeText.clearButtonMode = UITextFieldViewModeWhileEditing;
     codeText.placeholder     = @"请输入验证码";
     [boardView addSubview:codeText];
+    
+    NSArray *imgName = @[@"Login_phone",@"Login_yan"];
+    
+    for (int i = 0; i<imgName.count; i++) {
+        UIImageView *img = [[UIImageView alloc]initWithImage:[UIImage imageNamed:imgName[i]]];
+        img.contentMode  = UIViewContentModeScaleAspectFill;
+        [boardView addSubview:img];
+        [img mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(22);
+            make.width.mas_equalTo(17);
+            make.left.equalTo(boardView).offset(15);
+            if (i == 0) make.centerY.equalTo(self->phoneText.mas_centerY);
+            else make.centerY.equalTo(self->codeText.mas_centerY);
+        }];
+    }
     // 获取验证码
     codeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [codeButton setTitle:@"获取验证码" forState:UIControlStateNormal];
     codeButton.titleLabel.font = DYNormalFont;
-    [codeButton setBackgroundImage:[Helper imageWithColor:HomeColor withButonWidth:90 withButtonHeight:30] forState:UIControlStateNormal];
+    [codeButton setTitleColor:HomeColor forState:UIControlStateNormal];
     [codeButton addTarget:self action:@selector(getCodeClick:) forControlEvents:UIControlEventTouchUpInside];
     codeButton.layer.cornerRadius = 5;
     codeButton.clipsToBounds      = YES;
@@ -73,21 +108,21 @@
     [loginButton setTitle:@"登  录" forState:UIControlStateNormal];
     [loginButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
     [loginButton addTarget:self action:@selector(loginClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loginButton];
+    [boardView addSubview:loginButton];
     // 注册
     UIButton *registerButton      = [UIButton buttonWithType:UIButtonTypeCustom];
-    registerButton.titleLabel.font = [UIFont systemFontOfSize:13];
+    registerButton.titleLabel.font = [UIFont systemFontOfSize:14];
     [registerButton setTitle:@"立即注册" forState:UIControlStateNormal];
-    [registerButton setTitleColor:HomeColor forState:UIControlStateNormal];
+    [registerButton setTitleColor:DYGrayColor(161) forState:UIControlStateNormal];
     [registerButton addTarget:self action:@selector(registerClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:registerButton];
+    [boardView addSubview:registerButton];
     // 密码
     UIButton *pswButton       = [UIButton buttonWithType:UIButtonTypeCustom];
-    pswButton.titleLabel.font = [UIFont systemFontOfSize:13];
+    pswButton.titleLabel.font = [UIFont systemFontOfSize:14];
     [pswButton setTitle:@"密码登录" forState:UIControlStateNormal];
     [pswButton setTitleColor:HomeColor forState:UIControlStateNormal];
     [pswButton addTarget:self action:@selector(passwordClick) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:pswButton];
+    [boardView addSubview:pswButton];
     
     // 线条
     UILabel *lineA        = [UILabel new];
@@ -98,16 +133,24 @@
     
     
     // 布局
+    [backgroundImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_offset(UIEdgeInsetsZero);
+    }];
     [boardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(15);
-        make.right.equalTo(self.view).offset(-15);
-        make.top.equalTo(self.view).offset(55);
-        make.height.mas_equalTo(130);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.bottom.equalTo(self.view).offset(-DYCalculateHeigh(45));
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(45)+self->statusHeight);
+    }];
+    [logoImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.width.mas_equalTo(90);
+        make.centerX.equalTo(boardView.mas_centerX);
+        make.top.equalTo(boardView.mas_top).offset(44);
     }];
     [phoneText mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(boardView).offset(30);
+        make.left.equalTo(boardView).offset(40);
         make.right.equalTo(boardView).offset(-30);
-        make.top.equalTo(boardView).offset(15);
+        make.top.equalTo(logoImg.mas_bottom).offset(44);
         make.height.mas_equalTo(40);
     }];
     [codeText mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -135,17 +178,17 @@
         make.top.equalTo(self->codeText.mas_bottom);
     }];
     [loginButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.top.equalTo(boardView.mas_bottom).offset(50);
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(boardView).offset(25);
+        make.right.equalTo(boardView).offset(-25);
+        make.top.equalTo(lineB.mas_bottom).offset(40);
     }];
     [registerButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(40);
+        make.left.equalTo(loginButton);
         make.top.equalTo(loginButton.mas_bottom).offset(10);
     }];
     [pswButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.view).offset(-40);
+        make.right.equalTo(loginButton);
         make.top.equalTo(loginButton.mas_bottom).offset(10);
     }];
     

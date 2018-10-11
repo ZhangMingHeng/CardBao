@@ -90,10 +90,10 @@
         make.right.equalTo(footView).offset(-15);
     }];
     [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(40);
-        make.left.equalTo(footView).offset(25);
-        make.right.equalTo(footView).offset(-25);
-        make.bottom.equalTo(footView.mas_bottom).offset(-20);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(footView).offset(37);
+        make.right.equalTo(footView).offset(-37);
+        make.bottom.equalTo(footView.mas_bottom).offset(-70);
     }];
 }
 #pragma mark TableView protocol

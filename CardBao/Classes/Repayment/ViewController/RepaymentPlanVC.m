@@ -7,6 +7,7 @@
 //
 
 #import "RepaymentPlanVC.h"
+#import "RepaymentListCell.h"
 
 @interface RepaymentPlanVC ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -27,11 +28,12 @@
     
     // tableView
     listTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
-//    [listTableView registerClass:[RepaymentDetailsCell class] forCellReuseIdentifier:@"RepaymentDetailsCell"];
-    listTableView.dataSource      = self;
-    listTableView.delegate        = self;
-    listTableView.rowHeight       = 50;
-    listTableView.tableFooterView = [UIView new];
+    [listTableView registerClass:[RepaymentListCell class] forCellReuseIdentifier:@"RepaymentListCell"];
+    listTableView.dataSource         = self;
+    listTableView.delegate           = self;
+    listTableView.estimatedRowHeight = 200;
+    listTableView.tableFooterView    = [UIView new];
+    listTableView.backgroundColor    = DYGrayColor(239.0);
     [self.view addSubview:listTableView];
     
     [listTableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -39,29 +41,29 @@
     }];
 }
 #pragma mark TableView protocol
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 5;
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 10;
+    return 1;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return UITableViewAutomaticDimension;
 }
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-   return 44;
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 10.0;
 }
--(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 44)];
-    headerView.backgroundColor = [UIColor whiteColor];
-    
-    [self initCellUI:headerView withData:@[@"应还款日期",@"应还款额",@"状态"]];
-    
-    return headerView;
+-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [UIView new];
 }
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *idf = @"CELL";
-    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:idf];
-    cell.selectionStyle   = UITableViewCellSelectionStyleNone;
-    
-    [self initCellUI:cell withData:@[@"2018年3月28号",@"¥5454.00",@"已还"]];
+    RepaymentListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"RepaymentListCell"];
+    cell.selectionStyle           = UITableViewCellSelectionStyleNone;
+    cell.moneyLabel.text          = @"¥ 500.00";
+    cell.monthLabel.text          = @"应还款日期：2018-09-09"; //254,116,117（逾期未还款）black（已还款）
+    cell.dateLabel.attributedText = [self setAttributedStringColor:@"还款状态：未还款" color:DYColor(0.0, 145.0, 234)];
+    cell.codeLabel.text           = @"第一期";
+    cell.iconImgView.image        = [UIImage imageNamed:@"Repayment_icon"];
     return cell;
 }
 -(void)initCellUI:(id)obj withData:(NSArray*)array {
@@ -97,6 +99,12 @@
         make.bottom.equalTo(obj);
     }];
     
+}
+// 颜色
+-(NSMutableAttributedString*)setAttributedStringColor:(NSString*) string color:(UIColor*) color {
+    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(5, string.length-5)];
+    return attributedString;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

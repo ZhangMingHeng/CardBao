@@ -18,6 +18,7 @@
     UITextField *phoneText;
     UITextField *passwordText;
     AppDelegate *appDele;
+    CGFloat statusHeight; // 状态栏高度
 }
 @end
 
@@ -27,12 +28,31 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     appDele = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [self getStatusHeight];
     [self getUI];
     
+}
+-(void)getStatusHeight {
+    CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
+    //获取导航栏的rect
+    CGRect navRect = self.navigationController.navigationBar.frame;
+    
+    statusHeight = statusRect.size.height + navRect.size.height;
 }
 #pragma mark GetUI
 -(void)getUI {
     self.title = @"登 录";
+//     设置view全屏
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    
+    
+    // 背景图
+    UIImageView *backgroundImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_background"]];
+    backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:backgroundImg];
+    // 自定义导航栏
+    [self setNavigationViewTitle:@"登 录" hiddenBackButton:YES];
+    
     // 背景框
     UIView *boardView             = [[UIView alloc] init];
     boardView.layer.shadowColor   = [UIColor blackColor].CGColor;
@@ -41,6 +61,10 @@
     boardView.layer.shadowOffset  = CGSizeMake(1, 1);
     boardView.backgroundColor     = [UIColor whiteColor];
     [self.view addSubview:boardView];
+    // logo
+    UIImageView *logoImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_logo"]];
+    logoImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [boardView addSubview:logoImg];
 
     // 输入框
     // 手机
@@ -64,7 +88,7 @@
     [yanButton setTitle:@"验证码登录" forState:UIControlStateNormal];
     [yanButton setTitleColor:HomeColor forState:UIControlStateNormal];
     [yanButton addTarget:self action:@selector(yanLogin:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:yanButton];
+    [boardView addSubview:yanButton];
     // 登录
     UIButton *loginButton          = [UIButton buttonWithType:UIButtonTypeCustom];
     loginButton.layer.cornerRadius = 20;
@@ -72,21 +96,21 @@
     [loginButton setTitle:@"登  录" forState:UIControlStateNormal];
     [loginButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
     [loginButton addTarget:self action:@selector(loginClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:loginButton];
+    [boardView addSubview:loginButton];
     // 注册
     UIButton *registerButton       = [UIButton buttonWithType:UIButtonTypeCustom];
     registerButton.titleLabel.font = [UIFont systemFontOfSize:14];
     [registerButton setTitle:@"立即注册" forState:UIControlStateNormal];
-    [registerButton setTitleColor:HomeColor forState:UIControlStateNormal];
+    [registerButton setTitleColor:DYGrayColor(161.0) forState:UIControlStateNormal];
     [registerButton addTarget:self action:@selector(registerClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:registerButton];
+    [boardView addSubview:registerButton];
     // 忘记密码
     UIButton *forgetButton       = [UIButton buttonWithType:UIButtonTypeCustom];
     forgetButton.titleLabel.font = [UIFont systemFontOfSize:14];
     [forgetButton setTitle:@"忘记密码" forState:UIControlStateNormal];
-    [forgetButton setTitleColor:HomeColor forState:UIControlStateNormal];
+    [forgetButton setTitleColor:DYColor(254.0, 116.0, 117.0) forState:UIControlStateNormal];
     [forgetButton addTarget:self action:@selector(forgetClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:forgetButton];
+    [boardView addSubview:forgetButton];
     
     
     // 线条
@@ -95,19 +119,40 @@
     lineB.backgroundColor = lineA.backgroundColor = DYGrayColor(231);
     [boardView addSubview:lineA];
     [boardView addSubview:lineB];
+    NSArray *imgName = @[@"Login_phone",@"Login_psw"];
     
-    
+    for (int i = 0; i<imgName.count; i++) {
+        UIImageView *img = [[UIImageView alloc]initWithImage:[UIImage imageNamed:imgName[i]]];
+        img.contentMode  = UIViewContentModeScaleAspectFill;
+        [boardView addSubview:img];
+        [img mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(22);
+            make.width.mas_equalTo(17);
+            make.left.equalTo(boardView).offset(15);
+            if (i == 0) make.centerY.equalTo(self->phoneText.mas_centerY);
+            else make.centerY.equalTo(self->passwordText.mas_centerY);
+        }];
+    }
+
     // 布局
+    [backgroundImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_offset(UIEdgeInsetsZero);
+    }];
     [boardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(15);
-        make.right.equalTo(self.view).offset(-15);
-        make.top.equalTo(self.view).offset(55);
-        make.height.mas_equalTo(130);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.bottom.equalTo(self.view).offset(-DYCalculateHeigh(45));
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(45)+self->statusHeight);
+    }];
+    [logoImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.width.mas_equalTo(90);
+        make.centerX.equalTo(boardView.mas_centerX);
+        make.top.equalTo(boardView.mas_top).offset(44);
     }];
     [phoneText mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(boardView).offset(30);
+        make.left.equalTo(boardView).offset(40);
         make.right.equalTo(boardView).offset(-30);
-        make.top.equalTo(boardView).offset(15);
+        make.top.equalTo(logoImg.mas_bottom).offset(44);
         make.height.mas_equalTo(40);
     }];
     [passwordText mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -130,13 +175,13 @@
     }];
     [yanButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.view).offset(-40);
-        make.top.equalTo(boardView.mas_bottom).offset(10);
+        make.top.equalTo(lineB.mas_bottom).offset(10);
     }];
     [loginButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(boardView).offset(25);
+        make.right.equalTo(boardView).offset(-25);
         make.top.equalTo(yanButton.mas_bottom).offset(20);
-        make.height.mas_equalTo(40);
     }];
     [registerButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view).offset(40);
@@ -161,7 +206,7 @@
     }
     
     // "password": 密码； "account":账号
-    [[RequestManager shareInstance]postWithURL:LOGIN_INTERFACE parameters:@{@"account":[phoneText.text base64EncodeString],@"password":[passwordText.text base64EncodeString]} isLoading:YES loadTitle:@"登录中..." addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+    [[RequestManager shareInstance]postWithURL:LOGIN_INTERFACE parameters:@{@"account":phoneText.text,@"password":passwordText.text} isLoading:YES loadTitle:@"登录中..." addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         NSDictionary *dic = model;
         if ([Helper justDictionary:dic]) {
             

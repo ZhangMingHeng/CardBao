@@ -47,6 +47,7 @@
     listTableView.delegate        = self;
     listTableView.rowHeight       = 50;
     listTableView.tableFooterView = [UIView new];
+    listTableView.backgroundColor = DYGrayColor(239.0);
     [self.view addSubview:listTableView];
     
     // FootView
@@ -76,15 +77,15 @@
         make.edges.mas_offset(UIEdgeInsetsZero);
     }];
     [lastButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(45);
         make.top.equalTo(footView).offset(50);
-        make.left.equalTo(footView).offset(25);
-        make.right.equalTo(footView).offset(-25);
+        make.left.equalTo(footView).offset(37);
+        make.right.equalTo(footView).offset(-37);
     }];
     [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(40);
-        make.left.equalTo(footView).offset(25);
-        make.right.equalTo(footView).offset(-25);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(footView).offset(37);
+        make.right.equalTo(footView).offset(-37);
         make.top.equalTo(lastButton.mas_bottom).offset(20);
     }];
 }
@@ -135,10 +136,18 @@
             
         }];
     }
-    
     // 前两行不可编辑
     if (indexPath.row == 0||indexPath.row == 1) input.userInteractionEnabled = NO;
+    if (indexPath.row == 3) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        input.userInteractionEnabled = NO;
+    }
     return  cell;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 3) {
+        [self showPickerViewWithDataList:@[@"工商银行",@"招商银行",@"建设银行",@"农业银行",@"中国银行"] tipLabelString:@"请选择开户行"];
+    }
 }
 #pragma mark 上一步、下一步
 -(void)lastClick:(UIButton*)sender {
@@ -179,6 +188,27 @@
         [button setTitle:[NSString stringWithFormat:@"重新发送"] forState:UIControlStateNormal];
     }
     _countDown = _countDown-1;
+}
+#pragma mark 显示选择控制器
+- (void)showPickerViewWithDataList:(NSArray *)dataList tipLabelString:(NSString *)string{
+    // Custom propery（自定义属性）
+    NSDictionary *propertyDict = @{ZJPickerViewPropertySureBtnTitleColorKey     : HomeColor,
+                                   ZJPickerViewPropertySelectRowTitleAttrKey    : @{NSForegroundColorAttributeName:HomeColor},
+                                   ZJPickerViewPropertyTipLabelTextKey          : string,
+                                   ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
+                                   ZJPickerViewPropertyIsShowSelectContentKey   : @YES,
+                                   ZJPickerViewPropertyIsScrollToSelectedRowKey : @YES,
+                                   };
+    [ZJPickerView zj_showWithDataList:dataList propertyDict:propertyDict completion:^(NSString *selectContent) {
+        NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+        
+        // 赋值
+//        if (self->showLimitPicker) self->applyModel.creditTerm = selectContent;
+//        else self->applyModel.loanOfUse = selectContent;
+//
+//        // 刷新
+//        [self->listTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self->showLimitPicker?2:0 inSection:self->showLimitPicker?0:1]] withRowAnimation:UITableViewRowAnimationNone];
+    }];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

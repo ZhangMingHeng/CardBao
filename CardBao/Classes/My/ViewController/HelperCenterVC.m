@@ -58,6 +58,9 @@
     // 行数
     return 1;
 }
+-(CGFloat)foldingTableView:(FoldingTableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return  10.0;
+}
 -(CGFloat)foldingTableView:(FoldingTableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 行高
     return UITableViewAutomaticDimension;
@@ -78,9 +81,6 @@
     cell.textLabel.numberOfLines = 0;
     cell.textLabel.font          = DYNormalFont;
     return  cell;
-}
--(CGFloat)foldingTableView:(FoldingTableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 1;
 }
 - (void )foldingTableView:(FoldingTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // 点击cell

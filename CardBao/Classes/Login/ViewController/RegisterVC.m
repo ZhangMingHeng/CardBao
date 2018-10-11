@@ -7,20 +7,19 @@
 //
 
 #import "RegisterVC.h"
-#import "YJBannerView.h"
 #import "TabBarViewController.h"
 
 #define CodeNumer 120
 
-@interface RegisterVC ()<YJBannerViewDataSource, YJBannerViewDelegate>
+@interface RegisterVC ()
 {
     UIButton *codeButton;
     UIButton *selectButton;
     AppDelegate *appDele;
+    CGFloat statusHeight; // 状态栏高度
 }
 @property (nonatomic, assign) int countDown;
 @property (nonatomic, strong) NSTimer *timer;
-@property (nonatomic, strong) YJBannerView *normalBannerView; /**< 普通的banner */
 @end
 
 @implementation RegisterVC
@@ -29,35 +28,33 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     appDele = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [self getStatusHeight];
     [self getUI];
-    
-    [self loadLocalData];
-    
 }
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
+-(void)getStatusHeight {
+    CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
+    //获取导航栏的rect
+    CGRect navRect = self.navigationController.navigationBar.frame;
     
-    [self.view addSubview:self.normalBannerView];
-    [self.normalBannerView startTimerWhenAutoScroll];
-    [self.normalBannerView adjustBannerViewWhenCardScreen];
+    statusHeight = statusRect.size.height + navRect.size.height;
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     UITextField *phoneText = [self.view viewWithTag:1];
     [phoneText becomeFirstResponder];
 }
--(void)loadLocalData {
-    [self.normalBannerView reloadData];
-}
 #pragma mark GETUI
 -(void)getUI {
     self.title = @"注 册";
-    NSArray *plArray = @[@"请输入手机号码",@"请输入验证码",@"6-16数字、字母或符号组成"];
     
     // 背景图
-    UIImageView *backImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Login_ Background"]];
-    backImg.contentMode  = UIViewContentModeScaleAspectFill;
-    [self.view addSubview:backImg];
+    UIImageView *backgroundImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_background"]];
+    backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:backgroundImg];
+    // 自定义导航栏
+    [self setNavigationViewTitle:@"注 册" hiddenBackButton:NO];
+    
+    NSArray *plArray = @[@"请输入手机号码",@"请输入验证码",@"密码 6-16数字、字母或符号组成"];
     
     // 背景输入框
     UIView *boardView             = [[UIView alloc] init];
@@ -71,6 +68,7 @@
     NSArray *imgName = @[@"Login_phone",@"Login_yan",@"Login_psw"];
     for (int i = 0; i<plArray.count; i++) {
         UIImageView *img = [[UIImageView alloc]initWithImage:[UIImage imageNamed:imgName[i]]];
+        img.contentMode  = UIViewContentModeScaleAspectFill;
         [boardView addSubview:img];
         UITextField *textfield    = [UITextField new];
         textfield.placeholder     = plArray[i];
@@ -84,9 +82,9 @@
         // 获取验证码按钮
         if (i == 1) {
             codeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [codeButton setTitle:@"获取验证码" forState:UIControlStateNormal];
             codeButton.titleLabel.font = DYNormalFont;
-            [codeButton setBackgroundImage:[Helper imageWithColor:HomeColor withButonWidth:90 withButtonHeight:30] forState:UIControlStateNormal];
+            [codeButton setTitle:@"获取验证码" forState:UIControlStateNormal];
+            [codeButton setTitleColor:HomeColor forState:UIControlStateNormal];
             [codeButton addTarget:self action:@selector(getCodeClick:) forControlEvents:UIControlEventTouchUpInside];
             codeButton.layer.cornerRadius = 5;
             codeButton.clipsToBounds      = YES;
@@ -101,13 +99,14 @@
         else textfield.secureTextEntry = YES;
         
         //布局
-        [backImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        [backgroundImg mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.mas_offset(UIEdgeInsetsZero);
         }];
         [img mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(boardView).offset(15);
-            make.top.equalTo(boardView).offset(30+(25+15*2)*i);
-            make.width.height.mas_equalTo(25);
+            make.top.equalTo(boardView).offset(40+(25+15*2)*i);
+            make.height.mas_equalTo(22);
+            make.width.mas_equalTo(17);
         }];
         [linelabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(boardView).offset(15);
@@ -135,8 +134,10 @@
     [boardView addSubview:selectButton];
     
     // 阅读文字
-    UILabel *readLabel = [UILabel new];
-    readLabel.text     = @"我已阅读并同意《注册协议》";
+    UILabel *readLabel  = [UILabel new];
+    readLabel.text      = @"我已阅读并同意《注册协议》";
+    readLabel.font      = [UIFont systemFontOfSize:14];
+    readLabel.textColor = DYGrayColor(161.0);
     [boardView addSubview:readLabel];
     
     // 注册按钮
@@ -144,34 +145,32 @@
     registerButton.layer.cornerRadius = 20;
     registerButton.clipsToBounds      = YES;
     [registerButton setTitle:@"立即注册" forState:UIControlStateNormal];
-    [registerButton setTitleColor:HomeColor forState:UIControlStateNormal];
-    [registerButton setBackgroundColor:[UIColor whiteColor]];
-//    [registerButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
+    [registerButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
     [registerButton addTarget:self action:@selector(registerClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:registerButton];
+    [boardView addSubview:registerButton];
     
     [selectButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(boardView).offset(15);
-        make.bottom.equalTo(boardView).offset(-10);
         make.width.height.mas_equalTo(30);
+        make.left.equalTo(boardView).offset(15);
+        make.top.equalTo(boardView).offset(190);
     }];
     [readLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self->selectButton.mas_right).offset(5);
         make.centerY.equalTo(self->selectButton);
+        make.left.equalTo(self->selectButton.mas_right).offset(5);
     }];
     
     // 布局
     [boardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(15);
-        make.right.equalTo(self.view).offset(-15);
-        make.top.equalTo(self.view).offset(DYCalculateHeigh(245));
-        make.height.mas_equalTo(230);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.bottom.equalTo(self.view).offset(-DYCalculateHeigh(45));
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(45)+self->statusHeight);
     }];
     [registerButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(boardView.mas_bottom).offset(20);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(boardView).offset(25);
+        make.right.equalTo(boardView).offset(-25);
+        make.top.equalTo(readLabel.mas_bottom).offset(40);
     }];
 }
 -(void)selectClick:(UIButton *)sender {
@@ -274,27 +273,6 @@
         [button setTitle:[NSString stringWithFormat:@"重新发送"] forState:UIControlStateNormal];
     }
     _countDown = _countDown-1;
-}
-#pragma mark - DataSources
-- (NSArray *)bannerViewImages:(YJBannerView *)bannerView{
-    return @[@"http://img.zcool.cn/community/01430a572eaaf76ac7255f9ca95d2b.jpg",
-             @"http://img.zcool.cn/community/0137e656cc5df16ac7252ce6828afb.jpg",
-             @"http://img.zcool.cn/community/01e5445654513e32f87512f6f748f0.png@900w_1l_2o_100sh.jpg",
-             @"http://www.aykj.net/front/images/subBanner/baiduV2.jpg"
-             ];
-}
-- (void)bannerView:(YJBannerView *)bannerView didSelectItemAtIndex:(NSInteger)index {
-    NSLog(@"\n\nindex:%ld\n",(long)index);
-}
--(YJBannerView *)normalBannerView{
-    if (!_normalBannerView) {
-        
-        _normalBannerView = [YJBannerView bannerViewWithFrame:CGRectMake(0, 0, screenWidth, DYCalculateHeigh(115)) dataSource:self delegate:self emptyImage:[UIImage imageNamed:@"placeholder"] placeholderImage:[UIImage imageNamed:@"placeholder"] selectorString:@"sd_setImageWithURL:placeholderImage:"];
-        _normalBannerView.autoDuration = 2.5f;
-        
-    }
-    
-    return _normalBannerView;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

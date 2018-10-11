@@ -9,7 +9,9 @@
 #import "ChangePasswordVC.h"
 
 @interface ChangePasswordVC ()
-
+{
+    CGFloat statusHeight; // 状态栏高度
+}
 @end
 
 @implementation ChangePasswordVC
@@ -17,17 +19,37 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self getStatusHeight];
     [self getUI];
+    
+}
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.hidden = YES;
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     UITextField *textField = [self.view viewWithTag:10];
     [textField becomeFirstResponder];
 }
+-(void)getStatusHeight {
+    CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
+    //获取导航栏的rect
+    CGRect navRect = self.navigationController.navigationBar.frame;
+    
+    statusHeight = statusRect.size.height + navRect.size.height;
+}
 #pragma mark GetUI
 -(void)getUI {
     self.title = @"修改密码";
-    
+    //     设置view全屏
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    // 背景图
+    UIImageView *backgroundImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_background"]];
+    backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:backgroundImg];
+    // 自定义成导航栏
+    [self setNavigationViewTitle:@"修改密码" hiddenBackButton:NO];
     
     // 背景框
     UIView *boardView             = [[UIView alloc] init];
@@ -38,11 +60,14 @@
     boardView.backgroundColor     = [UIColor whiteColor];
     [self.view addSubview:boardView];
     
+    [backgroundImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_offset(UIEdgeInsetsZero);
+    }];
     [boardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(15);
-        make.right.equalTo(self.view).offset(-15);
-        make.top.equalTo(self.view).offset(55);
-        make.height.mas_equalTo(200);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.bottom.equalTo(self.view).offset(-DYCalculateHeigh(45));
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(45)+self->statusHeight);
     }];
     
     NSArray *plArray = @[@"请输入原密码",@"请输入新密码，6-16个字符",@"请再次输入新密码"];
@@ -92,12 +117,12 @@
     [submitButton setTitle:@"提 交" forState:UIControlStateNormal];
     [submitButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
     [submitButton addTarget:self action:@selector(submitClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:submitButton];
+    [boardView addSubview:submitButton];
     [submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(boardView.mas_bottom).offset(50);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(boardView).offset(25);
+        make.right.equalTo(boardView).offset(-25);
+        make.top.equalTo(boardView).offset(220);
     }];
 }
 -(void)submitClick:(UIButton*) sender {

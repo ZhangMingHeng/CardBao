@@ -38,10 +38,19 @@
 // 头像
 @property (nonatomic, strong) NSString *headImgUrl;
 
+// 地址
+@property (nonatomic, strong) NSString *address;
+
 // 可用额度
 @property (nonatomic, strong) NSString *availableCredit;
 
 // 最大额度
 @property (nonatomic, strong) NSString *maxCredit;
+
+// 身份证号码
+@property (nonatomic, strong) NSString *idCardNo;
+
+// 授信订单号
+@property (nonatomic, strong) NSString *creditNo;
 
 @end

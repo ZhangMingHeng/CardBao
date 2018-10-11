@@ -42,30 +42,32 @@
     static NSString *idF = @"CELL";
     UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:idF];
     cell.selectionStyle   = UITableViewCellSelectionStyleNone;
+    
     // 框架
-    UIView *framework            = [UIView new];
+    UIImageView *framework       = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"My_BCBackground"]];
+    framework.contentMode        = UIViewContentModeScaleAspectFill;
     framework.clipsToBounds      = YES;
     framework.layer.cornerRadius = 10.0;
     [cell.contentView addSubview:framework];
-    // 框架的渐变色彩
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.colors           = @[(__bridge id)DYColor(156, 152, 240).CGColor,(__bridge id)DYColor(62, 57, 198).CGColor];
-    gradientLayer.startPoint       = CGPointMake(0, 0); // 方向.起点
-    gradientLayer.endPoint         = CGPointMake(0, 1.0); // 方向.止点
-//    gradientLayer.locations        = @[@0,@1];
-    gradientLayer.frame            = CGRectMake(0, 0, screenWidth-30, 150);
-    [framework.layer addSublayer:gradientLayer];
+
+    
+//    // 框架的渐变色彩
+//    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+//    gradientLayer.colors           = @[(__bridge id)DYColor(156, 152, 240).CGColor,(__bridge id)DYColor(62, 57, 198).CGColor];
+//    gradientLayer.startPoint       = CGPointMake(0, 0); // 方向.起点
+//    gradientLayer.endPoint         = CGPointMake(0, 1.0); // 方向.止点
+////    gradientLayer.locations        = @[@0,@1];
+//    gradientLayer.frame            = CGRectMake(0, 0, screenWidth-30, 150);
+//    [framework.layer addSublayer:gradientLayer];
     
     // 银行名称
     UILabel *bankName  = [UILabel new];
     bankName.text      = @"招商银行";
-    bankName.font      = DYFontSize(20);
     bankName.textColor = [UIColor whiteColor];
     [framework addSubview:bankName];
     // 银行卡号
     UILabel *bankNum  = [UILabel new];
     bankNum.text      = @"1234567890";
-    bankNum.font      = DYNormalFont;
     bankNum.textColor = [UIColor whiteColor];
     [framework addSubview:bankNum];
     
@@ -74,7 +76,7 @@
         make.centerX.equalTo(cell.contentView);
         make.width.mas_equalTo(screenWidth-30);
         make.top.equalTo(cell.contentView).offset(10);
-        make.height.mas_equalTo(150);
+        make.height.mas_equalTo(116);
     }];
     [bankName mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(framework).offset(30);
@@ -82,7 +84,7 @@
         make.right.equalTo(framework).offset(-20);
     }];
     [bankNum mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(bankName).offset(70);
+        make.top.equalTo(bankName.mas_bottom).offset(26);
         make.left.equalTo(framework).offset(20);
         make.right.equalTo(framework).offset(-20);
     }];

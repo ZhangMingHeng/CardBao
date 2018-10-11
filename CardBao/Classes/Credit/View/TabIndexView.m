@@ -8,7 +8,7 @@
 
 #import "TabIndexView.h"
 #define UnSelecetColor [UIColor lightGrayColor]
-#define SelecetColor [UIColor blueColor]
+#define SelecetColor HomeColor
 @interface TabIndexView()
 
 @property (nonatomic, strong) UILabel *pointLabelOne;
@@ -36,6 +36,25 @@
     [self addSubview:self.pointLabelOne];
     [self addSubview:self.pointLabelTwo];
     
+    // 提示
+    // 生成附件
+    NSTextAttachment *textAttach = [[NSTextAttachment alloc]init];
+    textAttach.image = [UIImage imageNamed:@"Credit_tips"];
+    textAttach.bounds = CGRectMake(20, -3, 15, 15);
+    NSAttributedString *imgAtt = [NSAttributedString attributedStringWithAttachment:textAttach];
+    NSMutableAttributedString *attri = [[NSMutableAttributedString alloc] initWithString:@"        请填写详细真是的信息，可加快审核、提高额度"];
+    [attri insertAttributedString:imgAtt atIndex:0];
+    UILabel *tipsLabel        = [UILabel new];
+    tipsLabel.attributedText  = attri;
+    tipsLabel.textColor       = [UIColor lightGrayColor];
+    tipsLabel.font            = [UIFont systemFontOfSize:12.0];
+    tipsLabel.backgroundColor = DYGrayColor(239.0);
+    [self addSubview:tipsLabel];
+    [tipsLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(self);
+        make.height.mas_equalTo(30.0);
+    }];
+    
     // 中间线
     UILabel *lineLabel = [UILabel new];
     lineLabel.backgroundColor = [UIColor lightGrayColor];
@@ -43,24 +62,24 @@
     
     // 布局
     [self.pointOne mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(20);
+        make.top.equalTo(tipsLabel.mas_bottom).offset(20);
         make.height.width.mas_equalTo(20);
-        make.centerX.equalTo(self).offset(-CGRectGetWidth(self.frame)/4);
+        make.centerX.equalTo(self).offset(-40);
     }];
     [self.pointTwo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(20);
+        make.top.equalTo(tipsLabel.mas_bottom).offset(20);
         make.height.width.mas_equalTo(20);
-        make.centerX.equalTo(self).offset(CGRectGetWidth(self.frame)/4);
+        make.centerX.equalTo(self).offset(40);
     }];
     [self.pointLabelOne mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.pointOne.mas_bottom).offset(20);
+        make.top.equalTo(self.pointOne.mas_bottom).offset(10);
         make.height.mas_equalTo(20);
-        make.centerX.equalTo(self).offset(-CGRectGetWidth(self.frame)/4);
+        make.centerX.equalTo(self).offset(-40);
     }];
     [self.pointLabelTwo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.pointOne.mas_bottom).offset(20);
+        make.top.equalTo(self.pointOne.mas_bottom).offset(10);
         make.height.mas_equalTo(20);
-        make.centerX.equalTo(self).offset(CGRectGetWidth(self.frame)/4);
+        make.centerX.equalTo(self).offset(40);
     }];
     [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.pointOne.mas_right).offset(5);
@@ -85,6 +104,7 @@
         _pointOne               = [UILabel new];
         _pointOne.text          = @"1";
         _pointOne.textAlignment = NSTextAlignmentCenter;
+        _pointOne.font          = [UIFont systemFontOfSize:12.0];
     }
     return _pointOne;
 }
@@ -93,6 +113,7 @@
         _pointTwo               = [UILabel new];
         _pointTwo.text          = @"2";
         _pointTwo.textAlignment = NSTextAlignmentCenter;
+        _pointTwo.font          = [UIFont systemFontOfSize:12.0];
     }
     return _pointTwo;
 }
@@ -100,6 +121,8 @@
     if (!_pointLabelTwo) {
         _pointLabelTwo      = [UILabel new];
         _pointLabelTwo.text = @"单位信息";
+        _pointLabelTwo.font = [UIFont systemFontOfSize:12.0];
+        
     }
     return _pointLabelTwo;
 }
@@ -107,6 +130,7 @@
     if (!_pointLabelOne) {
         _pointLabelOne      = [UILabel new];
         _pointLabelOne.text = @"个人信息";
+        _pointLabelOne.font = [UIFont systemFontOfSize:12.0];
     }
     return _pointLabelOne;
 }
@@ -114,14 +138,15 @@
 // 设置样式
 -(void)setIndex:(NSInteger)index {
     
-    _pointOne.textColor         = index==0?SelecetColor:UnSelecetColor;
-    _pointOne.layer.borderColor = index==0?SelecetColor.CGColor:UnSelecetColor.CGColor;
-    _pointOne.layer.borderWidth = 1.0;
+    _pointOne.textColor = _pointTwo.textColor = [UIColor whiteColor];
+    
+    _pointOne.backgroundColor = index==0?SelecetColor:UnSelecetColor;
+//    _pointOne.layer.borderWidth = 1.0;
     _pointLabelOne.textColor    = index==0?SelecetColor:UnSelecetColor;
     
-    _pointTwo.textColor         = index==0?UnSelecetColor:SelecetColor;
-    _pointTwo.layer.borderColor = index==0?UnSelecetColor.CGColor:SelecetColor.CGColor;
-    _pointTwo.layer.borderWidth = 1.0;
+//    _pointTwo.textColor         = index==0?UnSelecetColor:SelecetColor;
+    _pointTwo.backgroundColor = index==0?UnSelecetColor:SelecetColor;
+//    _pointTwo.layer.borderWidth = 1.0;
     _pointLabelTwo.textColor    = index==0?UnSelecetColor:SelecetColor;
    
 }

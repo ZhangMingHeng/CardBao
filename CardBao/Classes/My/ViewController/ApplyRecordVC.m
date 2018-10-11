@@ -6,8 +6,8 @@
 //  Copyright © 2018年 andy_zhang. All rights reserved.
 //
 
-#import "RecordCell.h"
 #import "ApplyRecordVC.h"
+#import "RepaymentListCell.h"
 
 @interface ApplyRecordVC ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -27,7 +27,7 @@
     self.title = @"申请记录";
     // tableView
     listTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
-    [listTableView registerClass:[RecordCell class] forCellReuseIdentifier:@"RecordCell"];
+    [listTableView registerClass:[RepaymentListCell class] forCellReuseIdentifier:@"RepaymentListCell"];
     listTableView.dataSource         = self;
     listTableView.delegate           = self;
     listTableView.estimatedRowHeight = 200;
@@ -70,17 +70,32 @@
 }
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    RecordCell *cell    = [tableView dequeueReusableCellWithIdentifier:@"RecordCell"];
+    RepaymentListCell *cell    = [tableView dequeueReusableCellWithIdentifier:@"RepaymentListCell"];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
     // 赋值
-    cell.moneyLabel.text = @"¥500.00";
-    cell.monthLabel.text = @"4个月";
-    cell.dateLabel.text  = @"2018-09-09";
-    cell.codeLabel.text  = @"卡宝1254531";
-    cell.stateLabel.text = @"待审核";
+    cell.moneyLabel.attributedText  = [self setAttributedStringColor: @"申请金额(元)\n¥ 500.00" range:NSMakeRange(0, 7)];
+    cell.monthLabel.text            = @"借款期限：4个月";
+    cell.dateLabel.text             = @"申请日期：2018-09-09";
+    cell.codeLabel.text             = @"卡宝1254531";
+    cell.statusLabbel.attributedText = [self setAttributedStringColor:@"申请状态：待审核" color:DYColor(254.0, 116.0, 117)];
     
     return cell;
+}
+// 颜色、行距富文本、字体大小
+-(NSMutableAttributedString*)setAttributedStringColor:(NSString*) string range:(NSRange)range{
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.lineSpacing = 8;
+    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:DYGrayColor(161) range:range];
+    [attributedString addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:12.0] range:range];
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, string.length)];
+    return attributedString;
+}
+// 颜色
+-(NSMutableAttributedString*)setAttributedStringColor:(NSString*) string color:(UIColor*) color {
+    NSMutableAttributedString * attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(5, string.length-5)];
+    return attributedString;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -14,6 +14,7 @@
 @interface ForgetPasswordVC ()
 {
     UIButton *codeButton;
+    CGFloat statusHeight; // 状态栏高度
 }
 @property (nonatomic, assign) int countDown;
 @property (nonatomic, strong) NSTimer *timer;
@@ -24,8 +25,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self getStatusHeight];
     [self getUI];
+}
+-(void)getStatusHeight {
+    CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
+    //获取导航栏的rect
+    CGRect navRect = self.navigationController.navigationBar.frame;
     
+    statusHeight = statusRect.size.height + navRect.size.height;
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -37,6 +45,13 @@
     self.title = @"忘记密码";
    NSArray *plArray    = @[@"请输入注册手机号码",@"请输入验证码",@"请设置新密码,6-16数字、字母或符号组成"];
     
+    // 背景图
+    UIImageView *backgroundImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_background"]];
+    backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:backgroundImg];
+    
+    // 自定义导航栏
+    [self setNavigationViewTitle:@"忘记密码" hiddenBackButton:NO];
     
     // 背景框
     UIView *boardView             = [[UIView alloc] init];
@@ -51,6 +66,7 @@
     NSArray *imgName = @[@"Login_phone",@"Login_yan",@"Login_psw"];
     for (int i = 0; i<plArray.count; i++) {
         UIImageView *img = [[UIImageView alloc]initWithImage:[UIImage imageNamed:imgName[i]]];
+        img.contentMode  = UIViewContentModeScaleAspectFill;
         [boardView addSubview:img];
         UITextField *textfield    = [UITextField new];
         textfield.placeholder     = plArray[i];
@@ -65,9 +81,9 @@
         // 获取验证码按钮
         if (i == 1) {
             codeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [codeButton setTitle:@"获取验证码" forState:UIControlStateNormal];
             codeButton.titleLabel.font = DYNormalFont;
-            [codeButton setBackgroundImage:[Helper imageWithColor:HomeColor withButonWidth:90 withButtonHeight:30] forState:UIControlStateNormal];
+            [codeButton setTitle:@"获取验证码" forState:UIControlStateNormal];
+            [codeButton setTitleColor:HomeColor forState:UIControlStateNormal];
             [codeButton addTarget:self action:@selector(getCodeClick:) forControlEvents:UIControlEventTouchUpInside];
             codeButton.layer.cornerRadius = 5;
             codeButton.clipsToBounds      = YES;
@@ -87,8 +103,9 @@
         //布局
         [img mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(boardView).offset(15);
-            make.top.equalTo(boardView).offset(30+(25+15*2)*i);
-            make.width.height.mas_equalTo(25);
+            make.top.equalTo(boardView).offset(40+(25+15*2)*i);
+            make.height.mas_equalTo(22);
+            make.width.mas_equalTo(17);
         }];
         [linelabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(boardView).offset(15);
@@ -116,20 +133,23 @@
     [registerButton setTitle:@"完 成" forState:UIControlStateNormal];
     [registerButton setBackgroundImage:[UIImage imageNamed:@"Common_SButton"] forState:UIControlStateNormal];
     [registerButton addTarget:self action:@selector(registerClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:registerButton];
+    [boardView addSubview:registerButton];
     
     // 布局
+    [backgroundImg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_offset(UIEdgeInsetsZero);
+    }];
     [boardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(15);
-        make.right.equalTo(self.view).offset(-15);
-        make.top.equalTo(self.view).offset(55);
-        make.height.mas_equalTo(200);
+        make.left.equalTo(self.view).offset(10);
+        make.right.equalTo(self.view).offset(-10);
+        make.top.equalTo(self.view).offset(DYCalculateHeigh(45)+self->statusHeight);
+        make.bottom.equalTo(self.view).offset(-DYCalculateHeigh(45));
     }];
     [registerButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(25);
-        make.right.equalTo(self.view).offset(-25);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(boardView.mas_bottom).offset(50);
+        make.height.mas_equalTo(45);
+        make.left.equalTo(boardView).offset(25);
+        make.right.equalTo(boardView).offset(-25);
+        make.top.equalTo(boardView).offset(220);
     }];
     
     
@@ -155,7 +175,7 @@
     [Helper resignTheFirstResponder];// 取消响应者
     
     //vCode：验证码； account：账号； password：密码
-    [[RequestManager shareInstance]postWithURL:REGISTER_INTERFACE parameters:@{@"vCode":codeText.text,@"account":phoneText.text,@"password":pswText.text} isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+    [[RequestManager shareInstance]postWithURL:FORGET_INTERFACE parameters:@{@"vCode":codeText.text,@"account":phoneText.text,@"password":pswText.text} isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
         [self.navigationController popViewControllerAnimated:YES];
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {

@@ -20,129 +20,107 @@
     return self;
 }
 -(void)initUI {
-    
-    //框架
-//    UILabel *framework          = [UILabel new];
-//    framework.layer.borderWidth = 1;
-//    framework.layer.borderColor = [UIColor lightGrayColor].CGColor;
-//    [self.contentView addSubview:framework];
-    
+    // icon
+    _iconImgView             = [UIImageView new];
+    _iconImgView.contentMode = UIViewContentModeScaleAspectFill;
+    [self.contentView addSubview:_iconImgView];
+    // 编号
     _codeLabel = [UILabel new];
     [self.contentView addSubview:_codeLabel];
-    
-    // 虚线
-//    UIImageView *lineLabel = [[UIImageView alloc]initWithFrame:CGRectMake(5, 40, LabelW*3, 1)];
-//    lineLabel.backgroundColor = [UIColor lightGrayColor];
-//    [self drawLineByImageView:lineLabel];
-//    [self.contentView addSubview:lineLabel];
-    
-    UILabel *moneyTitle = [UILabel new];
+    // 实线
+    UILabel *lineLabel = [[UILabel alloc]init];
+    lineLabel.backgroundColor = DYGrayColor(239.0);
+    [self.contentView addSubview:lineLabel];
+    // 金额
     _moneyLabel         = [UILabel new];
-    moneyTitle.text     = @"本期应还";
-    [self.contentView addSubview:moneyTitle];
+    _moneyLabel.font    = [UIFont systemFontOfSize:18.0];
     [self.contentView addSubview:_moneyLabel];
-    _moneyLabel.textAlignment = moneyTitle.textAlignment = NSTextAlignmentCenter;
-    
-    UILabel *monthTitle = [UILabel new];
+    _moneyLabel.textAlignment = NSTextAlignmentCenter;
+    _moneyLabel.textColor     = DYColor(42.0, 112.0, 241.0);
+    _moneyLabel.numberOfLines = 0;
+    // 期限
     _monthLabel         = [UILabel new];
-    monthTitle.text     = @"借款期限";
-    [self.contentView addSubview:monthTitle];
     [self.contentView addSubview:_monthLabel];
-    _monthLabel.textAlignment = monthTitle.textAlignment = NSTextAlignmentCenter;
-    
-    UILabel *dateTitle = [UILabel new];
+    // 时间
     _dateLabel         = [UILabel new];
-    dateTitle.text     = @"最近还款日";
-    [self.contentView addSubview:dateTitle];
     [self.contentView addSubview:_dateLabel];
-    _dateLabel.textAlignment = dateTitle.textAlignment = NSTextAlignmentCenter;
-    
-//    UILabel *lineL        = [UILabel new];
-//    lineL.backgroundColor = [UIColor lightGrayColor];
-//    [self.contentView addSubview:lineL];
-    
+    // 事件
     _button = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [_button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    [_button setBackgroundImage:[UIImage imageNamed:@"My_fullButton"] forState:UIControlStateNormal];
+    [_button setTitleColor:HomeColor forState:UIControlStateNormal];
+    _button.titleLabel.font = [UIFont systemFontOfSize:15.0];
     [self.contentView addSubview:_button];
+    // 状态
+    _statusLabbel = [UILabel new];
+    [self.contentView addSubview:_statusLabbel];
+    
+    // 样式
+   _statusLabbel.font      = _dateLabel.font      = _monthLabel.font      = [UIFont systemFontOfSize:12.0];
+   _statusLabbel.textColor = _dateLabel.textColor = _monthLabel.textColor = DYGrayColor(161);
     
     // 布局
     [_codeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(20);
         make.top.equalTo(self.contentView).offset(15);
     }];
-    [moneyTitle mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.contentView).offset(5);
-        make.top.equalTo(self->_codeLabel.mas_bottom).offset(30);
-        make.width.mas_equalTo(LabelW);
+    [_button mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(40);
+        make.centerY.equalTo(self->_codeLabel);
+        make.right.equalTo(self.contentView).offset(-20);
+    }];
+    [lineLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(1);
+        make.right.equalTo(self.contentView);
+        make.left.equalTo(self.contentView).offset(20);
+        make.top.equalTo(self.codeLabel.mas_bottom).offset(15.0);
     }];
     [_moneyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(moneyTitle);
-        make.top.equalTo(moneyTitle.mas_bottom).offset(10);
-        make.width.mas_equalTo(LabelW);
-    }];
-    [monthTitle mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(moneyTitle.mas_right);
-        make.top.equalTo(moneyTitle);
-        make.width.mas_equalTo(LabelW);
+        make.top.equalTo(self.monthLabel);
+//        make.bottom.equalTo(self.dateLabel);
+        make.left.equalTo(self.contentView).offset(20);
+        make.bottom.equalTo(self.contentView.mas_bottom).offset(-12);
     }];
     [_monthLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(monthTitle);
-        make.top.equalTo(self->_moneyLabel);
-        make.width.mas_equalTo(LabelW);
-    }];
-    [dateTitle mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(monthTitle.mas_right);
-        make.top.equalTo(moneyTitle);
-        make.width.mas_equalTo(LabelW);
+        make.left.equalTo(self.dateLabel);
+        make.top.equalTo(lineLabel.mas_bottom).offset(15);
+        make.right.equalTo(self.contentView).offset(-15.0);
     }];
     [_dateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(dateTitle);
-        make.top.equalTo(self->_moneyLabel);
-        make.width.mas_equalTo(LabelW);
+        make.right.equalTo(self.monthLabel);
+        make.top.equalTo(self.monthLabel.mas_bottom).offset(12.0);
+        make.bottom.equalTo(self.contentView.mas_bottom).offset(-12);
     }];
-//    [lineL mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self->_moneyLabel.mas_bottom).offset(10);
-//        make.left.equalTo(self.contentView).offset(5);
-//        make.width.mas_equalTo(LabelW*3);
-//        make.height.mas_equalTo(1.0);
-//    }];
-    [_button mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(self->_moneyLabel.mas_bottom).offset(15);
-        make.bottom.equalTo(self.contentView);
-    }];
-//    [framework mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.equalTo(self.contentView).offset(5);
-//        make.right.equalTo(self.contentView).offset(-5);
-//        make.top.bottom.equalTo(self.contentView);
-//    }];
-    
-    
+    // 注册监听者
+    [self addObserver:self forKeyPath:@"self.iconImgView.image" options:NSKeyValueObservingOptionNew context:nil];
+    [self addObserver:self forKeyPath:@"self.dateLabel.text" options:NSKeyValueObservingOptionNew context:nil];
 }
-
-
-- (void)drawLineByImageView:(UIImageView *)imageView {
-    UIGraphicsBeginImageContext(imageView.frame.size);   //开始画线 划线的frame
-    [imageView.image drawInRect:CGRectMake(0, 0, imageView.frame.size.width, imageView.frame.size.height)];
-    //设置线条终点形状
-    CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);
-    
-    CGContextRef line = UIGraphicsGetCurrentContext();
-    // 设置颜色
-    CGContextSetStrokeColorWithColor(line, [UIColor darkGrayColor].CGColor);
-    
-    
-    CGFloat lengths[] = {5,2};//先画4个点再画2个点
-    CGContextSetLineDash(line,0, lengths,2);//注意2(count)的值等于lengths数组的长度
-    
-    CGContextMoveToPoint(line, 0.0, 2.0);    //开始画线
-    CGContextAddLineToPoint(line,imageView.frame.size.width,2.0);
-    CGContextStrokePath(line);
-    // UIGraphicsGetImageFromCurrentImageContext()返回的就是image
-    UIImage *image =   UIGraphicsGetImageFromCurrentImageContext();
-    imageView.image = image;
+// 监听回调
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"self.iconImgView.image"]) {
+        [_iconImgView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.height.width.mas_equalTo(31.0);
+            make.top.equalTo(self.contentView).offset(9);
+            make.left.equalTo(self.contentView).offset(20);
+        }];
+        [_codeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.contentView).offset(60.0);
+        }];
+    } else if ([keyPath isEqualToString:@"self.dateLabel.text"]) {
+      
+        [_dateLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.monthLabel);
+            make.top.equalTo(self.monthLabel.mas_bottom).offset(8.0);
+        }];
+        [_statusLabbel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.monthLabel);
+            make.right.equalTo(self.monthLabel);
+            make.top.equalTo(self.dateLabel.mas_bottom).offset(8.0);
+            make.bottom.equalTo(self.contentView.mas_bottom).offset(-12);
+        }];
+    }
+}
+// 释放监听者
+-(void)dealloc {
+    [self removeObserver:self forKeyPath:@"self.iconImgView.image"];
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

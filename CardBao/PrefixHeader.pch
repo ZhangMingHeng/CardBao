@@ -35,6 +35,8 @@
 #import <ZLDefine.h>
 // pickerView 支持多行数据选择
 #import <ZJPickerView.h>
+// 自定义导航栏
+#import "UIViewController+NavigationView.h"
 
 //************************** 引入常用的头文件 End **************************//
 
@@ -44,7 +46,7 @@
 //#define Host_And_Port @"https://danyu.szfeiben.com/mobile/"
 
 // 测试服务器
-#define Host_And_Port @"http://114.215.78.33:8089/api/finance/"
+#define Host_And_Port @"http://139.129.220.247:8089/api/finance/"
 
 // 开发环境
 
@@ -53,17 +55,23 @@
 #define GETCODE_INTERFACE Host_And_Port@"user/auth/code"
 // 注册
 #define REGISTER_INTERFACE Host_And_Port@"user/register"
+// 忘记密码
+#define FORGET_INTERFACE Host_And_Port@"user/forget"
 // 登录
 #define LOGIN_INTERFACE Host_And_Port@"user/login"
 // 验证码登录
 #define CODELOGIN_INTERFACE Host_And_Port@"user/loginSms"
 
+
 // 借款首页
 #define BASEINFO_INTERFACE Host_And_Port@"user/base/info"
+
 
 // 授信流程接口
 // 创建授信订单接口
 #define CREATECREDITORDER_INTERFACE Host_And_Port@"credit/create"
+// 资料上传
+#define FILEUPLOAD_INTERFACE Host_And_Port@"data/upload"
 
 // 申请借款接口
 // 放款 获取验证码
@@ -78,7 +86,7 @@
 // 颜色
 #define DYGrayColor(value) [UIColor colorWithRed:value/255.0 green:value/255.0 blue:value/255.0 alpha:1]
 #define DYColor(value1,value2,value3) [UIColor colorWithRed:value1/255.0 green:value2/255.0 blue:value3/255.0 alpha:1]
-#define HomeColor [UIColor colorWithRed:118.0/255.0 green:113/255.0 blue:237/255.0 alpha:1]
+#define HomeColor [UIColor colorWithRed:0.0/255.0 green:145.0/255.0 blue:234.0/255.0 alpha:1]
 // 字体大小
 #define DYFontSize(size) ([UIFont systemFontOfSize:size])
 #define DYNormalFont [UIFont systemFontOfSize:15]
@@ -94,6 +102,8 @@
 #define BUGLYAPPID @"123456"
 // 产品编号
 #define PRODUCTNO @"1233455"
+
+
 
 //************************** 常量 End **************************//
 
@@ -130,6 +140,10 @@
 // 用户头像
 #define INPUTUserPhoto(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"USERPHOTO"]
 #define kUserPhoto [kUserDefaults stringForKey:@"USERPHOTO"]
+
+// 上传文件类型
+#define INPUTIMAGETYPE(value) [kUserDefaults setObject:[NSString stringWithFormat:@"%@",value ] forKey:@"IMAGETYPE"]
+#define kIMAGETYPE [kUserDefaults stringForKey:@"IMAGETYPE"]
 
 
 //************************** 用户信息 End **************************//

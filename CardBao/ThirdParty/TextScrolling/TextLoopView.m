@@ -45,6 +45,8 @@
 //    timeLabel.textColor = [UIColor colorWithRed:1.0 green:141.0/255.0 blue:85.0/255 alpha:1];
     UILabel *contentLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
     contentLabel.text   = _dataSource[indexPath.row];
+    contentLabel.textColor = DYColor(160, 188, 240);
+    contentLabel.backgroundColor = DYGrayColor(239);
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 //    [cell.contentView addSubview:timeLabel];
     [cell.contentView addSubview:contentLabel];

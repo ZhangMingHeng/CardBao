@@ -38,7 +38,7 @@
 //
 //    }
 
-    [self.navigationBar setBarTintColor:HomeColor]; // 背景色
+    [self.navigationBar setBarTintColor:[UIColor colorWithRed:42.0/255.0 green:113.0/255.0 blue:241.0/255.0 alpha:1]]; // 背景色
     [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}]; // title字體色
     self.navigationBar.translucent = NO; // 半透明色
     

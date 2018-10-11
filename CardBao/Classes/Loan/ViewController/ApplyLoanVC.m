@@ -35,7 +35,7 @@
     
 }
 -(void)localData {
-    titleArray = @[@"可用额度：",@"申请金额：",@"借款期限：",@"借款用途：",@"收款银行：",@"还款计划："];
+    titleArray = @[@[@"我的额度(元)",@"申请金额：",@"借款期限："],@[@"借款用途：",@"收款银行："],@[@"还款计划："]];
     limitArray = @[@"3个月",@"6个月",@"12个月",@"24个月",];
     useArray   = @[@"家电",@"数码",@"旅游",@"装修",@"教育",@"婚庆",@"租房",@"家居",@"医疗"];
     applyModel = [ApplyLoanModel new];
@@ -44,12 +44,15 @@
 #pragma mark GetUI
 -(void)getUI {
     [self.navigationItem setTitle:@"借款申请"];
+    // 导航栏的下划线置为空
+    self.navigationController.navigationBar.shadowImage = [UIImage new];
     // tableView
     listTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
     listTableView.dataSource      = self;
     listTableView.delegate        = self;
     listTableView.rowHeight       = 50;
     listTableView.tableFooterView = [UIView new];
+    listTableView.backgroundColor = DYGrayColor(239);
     [self.view addSubview:listTableView];
 //    UIPickerView
     // FootView
@@ -95,79 +98,115 @@
     [applyButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(footView).offset(25);
         make.right.equalTo(footView).offset(-25);
-        make.height.mas_equalTo(40);
-        make.top.equalTo(readLabel.mas_bottom).offset(100);
+        make.height.mas_equalTo(45);
+        make.top.equalTo(readLabel.mas_bottom).offset(80);
     }];
 }
 #pragma mark TableView protocol
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return titleArray.count;
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return [titleArray count];
 }
-
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    NSArray *rowArray= titleArray[section];
+    return rowArray.count;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewAutomaticDimension;
+}
 -(UITableViewCell*) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *idF  = @"CELL";
     UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:idF];
-    cell.textLabel.text   = titleArray[indexPath.row];
+    cell.textLabel.text   = titleArray[indexPath.section][indexPath.row];
     cell.selectionStyle   = UITableViewCellSelectionStyleNone;
-    if (indexPath.row == 0) {
-        UILabel *textLabel  = [UILabel new];
-        textLabel.text      = @"50000元";
-        textLabel.textColor = HomeColor;
-        [cell.contentView addSubview:textLabel];
-
-        [textLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(cell.contentView).offset(110);
-            make.right.equalTo(cell.contentView).offset(-15);
-            make.top.equalTo(cell.contentView).offset(5);
-            make.bottom.equalTo(cell.contentView).offset(-5);
-        }];
-    } else if (indexPath.row == 1) {
-        UITextField *textInput = [UITextField new];
-        textInput.keyboardType = UIKeyboardTypeNumberPad;
-        textInput.placeholder  = @"请输入申请金额";
-        textInput.text         = applyModel.creditMoney;
-        textInput.delegate     = self;
-        [cell.contentView addSubview:textInput];
-        
-        [textInput mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(cell.contentView).offset(110);
-            make.right.equalTo(cell.contentView).offset(-15);
-            make.top.equalTo(cell.contentView).offset(5);
-            make.bottom.equalTo(cell.contentView).offset(-5);
-        }];
-        
-    } else if (indexPath.row == 2||indexPath.row == 3||indexPath.row == 5) {
-
-        cell.accessoryType        = UITableViewCellAccessoryDisclosureIndicator;
-        
-        if (indexPath.row == 2) cell.detailTextLabel.text = applyModel.creditTerm.length>0?applyModel.creditTerm:@"请选择期限";
-        else if(indexPath.row == 3) cell.detailTextLabel.text = applyModel.loanOfUse.length>0?applyModel.loanOfUse:@"请选择用途";
-        else {
-         cell.detailTextLabel.text = @"查看计划";
-            cell.selectionStyle    = UITableViewCellSelectionStyleDefault;
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            // 背景
+            UIImageView *headerImg = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Common_backgroundHeader"]];
+            headerImg.contentMode  = UIViewContentModeScaleAspectFill;
+            [cell.contentView addSubview:headerImg];
+            // 文字
+            UILabel *payLabel       = [UILabel new];
+            payLabel.textColor      = [UIColor whiteColor];
+            payLabel.textAlignment  = NSTextAlignmentCenter;
+            payLabel.numberOfLines  = 0;
+            payLabel.attributedText = [self setAttributeStringFont:[NSString stringWithFormat:@"%@\n¥ 5000",cell.textLabel.text]];
+            [headerImg addSubview:payLabel];
+            // 布局
+            [headerImg mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.left.right.equalTo(cell.contentView);
+                make.height.mas_equalTo(DYCalculateHeigh(99));
+                make.bottom.equalTo(cell.contentView);
+            }];
+            [payLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.center.equalTo(headerImg);
+            }];
+            // 隐藏分割线
+            cell.separatorInset = UIEdgeInsetsMake(0, screenWidth, 0, -screenWidth);
+        } else if (indexPath.row == 1) {
+            UITextField *textInput = [UITextField new];
+            textInput.keyboardType = UIKeyboardTypeNumberPad;
+            textInput.placeholder  = @"请输入申请金额";
+            textInput.text         = applyModel.creditMoney;
+            textInput.delegate     = self;
+            [cell.contentView addSubview:textInput];
+            
+            [textInput mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(40.0);
+                make.top.equalTo(cell.contentView).offset(5);
+                make.left.equalTo(cell.contentView).offset(110);
+                make.right.equalTo(cell.contentView).offset(-15);
+                make.bottom.equalTo(cell.contentView).offset(-5);
+            }];
+            
+        } else {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.detailTextLabel.text = applyModel.creditTerm.length>0?applyModel.creditTerm:@"请选择期限";
+        }
+    } else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.detailTextLabel.text = applyModel.loanOfUse.length>0?applyModel.loanOfUse:@"请选择用途";
+        } else {
+            cell.detailTextLabel.text = @"尾号(6789)招商银行";
         }
     
-    } else if (indexPath.row == 4) {
-        cell.detailTextLabel.text = @"银行卡号1234567890";
+    } else {
+        cell.detailTextLabel.text = @"查看还款计划";
+        cell.selectionStyle       = UITableViewCellSelectionStyleDefault;
+        cell.accessoryType        = UITableViewCellAccessoryDisclosureIndicator;
     }
     
     return  cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.row == 5) {
+    if (indexPath.section == 2) {
         // 查看还款计划
         LoanPlanVC *planVC = [LoanPlanVC new];
         [self.navigationController pushViewController:planVC animated:YES];
-    } else if (indexPath.row == 2) {
+    } else if (indexPath.section == 0&&indexPath.row == 2) {
         // 选择期限
         showLimitPicker = YES;
         [self showPickerViewWithDataList:limitArray tipLabelString:applyModel.creditTerm.length>0?applyModel.creditTerm:@"请选择期限"];
-    } else if (indexPath.row == 3) {
+    } else if (indexPath.row == 0&&indexPath.section == 1) {
         // 选择用途
         showLimitPicker = NO;
         [self showPickerViewWithDataList:useArray tipLabelString:applyModel.loanOfUse.length>0?applyModel.loanOfUse:@"请选择用途"];
     }
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 10.0;
+}
+-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [UIView new];
+}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    // 禁止下滑
+    CGPoint offset = scrollView.contentOffset;
+    if (offset.y < 0) {
+        offset.y = 0;
+    }
+    scrollView.contentOffset = offset;
 }
 #pragma mark Apply Event
 -(void)applyClick:(UIButton*) sender {
@@ -224,22 +263,20 @@
         else self->applyModel.loanOfUse = selectContent;
         
         // 刷新
-        [self->listTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self->showLimitPicker?2:3 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-        
-        // show select content
-//        NSArray *selectStrings = [selectContent componentsSeparatedByString:@","];
-//        NSMutableString *selectStringCollection = [[NSMutableString alloc] initWithString:@"选择内容："];
-//        [selectStrings enumerateObjectsUsingBlock:^(NSString *selectString, NSUInteger idx, BOOL * _Nonnull stop) {
-//            if (selectString.length && ![selectString isEqualToString:@""]) {
-//                [selectStringCollection appendString:selectString];
-//            }
-//        }];
-       
+        [self->listTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self->showLimitPicker?2:0 inSection:self->showLimitPicker?0:1]] withRowAnimation:UITableViewRowAnimationNone];
     }];
 }
 #pragma mark textField protocol
 -(void)textFieldDidEndEditing:(UITextField *)textField {
     applyModel.creditMoney = textField.text;
+}
+// 字体大小富文本
+-(NSMutableAttributedString*)setAttributeStringFont:(NSString*)string {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:string];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    dic[NSFontAttributeName] = [UIFont systemFontOfSize:25];
+    [attributedString addAttributes:dic range:NSMakeRange(7, string.length-7)];
+    return attributedString;
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
