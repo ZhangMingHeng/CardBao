@@ -188,10 +188,60 @@ FloatView *floatV;
     checkBit = [checkString substringWithRange:NSMakeRange(remainder,1)];// 判断校验位
     return [checkBit isEqualToString:[[IDCardNumber substringWithRange:NSMakeRange(17,1)] uppercaseString]];
 }
+//  检验银行卡
++ (BOOL)justBankCardNo:(NSString*) cardNo {
+    int oddsum  = 0;     // 奇数求和
+    int evensum = 0;    // 偶数求和
+    int allsum  = 0;
+    int cardNoLength = (int)[cardNo length];
+    int lastNum = [[cardNo substringFromIndex:cardNoLength-1] intValue];
+  
+    cardNo = [cardNo substringToIndex:cardNoLength - 1];
+    for (int i = cardNoLength -1 ; i>=1;i--) {
+        NSString *tmpString = [cardNo substringWithRange:NSMakeRange(i-1, 1)];
+        int tmpVal = [tmpString intValue];
+        if (cardNoLength % 2 ==1 ) {
+            if((i % 2) == 0){
+                tmpVal *= 2;
+                if(tmpVal>=10)
+                    tmpVal -= 9;
+                evensum += tmpVal;
+            }else{
+                oddsum += tmpVal;
+            }
+        }else{
+            if((i % 2) == 1){
+                tmpVal *= 2;
+                if(tmpVal>=10)
+                    tmpVal -= 9;
+                evensum += tmpVal;
+            }else{
+                oddsum += tmpVal;
+            }
+        }
+    }
+   
+    allsum = oddsum + evensum;
+    allsum += lastNum;
+    if((allsum % 10) == 0)
+        return YES;
+    else
+        return NO;
+}
 // 字典判断是否为空
 + (BOOL) justDictionary:(id)dictionary {
     if ([dictionary isKindOfClass:[NSDictionary class]]&&dictionary!=nil&&![dictionary isKindOfClass:[NSNull class]]) return YES;
     else return NO;
+}
+// 数组判断是否为空
++ (BOOL) justArray:(id)array {
+    if ([array isKindOfClass:[NSArray class]]&&array!=nil&&![array isKindOfClass:[NSNull class]]) {
+        NSArray *ar = array;
+        if (ar.count == 0) {
+            return NO;
+        }
+        return YES;
+    } else return NO;
 }
 // 过滤字符删除
 + (NSString *)filterCharactor:(NSString *)string withRegex:(NSString *)regexStr{
@@ -331,39 +381,53 @@ FloatView *floatV;
     UIWindow * keyWindow = [[UIApplication sharedApplication] keyWindow];
     UIView * firstResponder = [keyWindow performSelector:@selector(firstResponder)];
     [firstResponder resignFirstResponder];
-}  
-#pragma mark - 取userDefault的值
-+ (id)getUserDefaultWithKey:(NSString *)key type:(TWUserDefaultType)type{
-    switch (type) {
-        case TWUserDefaultTypeId:{
-            id value = [[NSUserDefaults standardUserDefaults] valueForKey:key];
-            if (value == nil) {
-                value = nil;
-            }
-            return value;
-            break;
-        }
-        case TWUserDefaultTypeObject:{
-            id value = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-            if (value == nil) {
-                value = @"";
-            }else if([value isKindOfClass:[NSNumber class]]){
-                value = [NSString stringWithFormat:@"%@", value];
-            }
-            return value;
-            break;
-        }
-        case TWUserDefaultTypeURL:{
-            id value = [[NSUserDefaults standardUserDefaults] URLForKey:key];
-            if (value == nil) {
-                value = [NSURL URLWithString:@""];
-            }
-            return value;
-        }
-        default:
-            break;
+}
+// 获取设备IP
++(NSString *)deviceWANIPAddress {
+    NSError *error;
+    NSURL *ipURL = [NSURL URLWithString:@"https://pv.sohu.com/cityjson?ie=utf-8"];
+    NSMutableString *ip = [NSMutableString stringWithContentsOfURL:ipURL encoding:NSUTF8StringEncoding error:&error];
+//    判断返回字符串是否为所需数据
+    if ([ip hasPrefix:@"var returnCitySN = "]) {
+        //对字符串进行处理，然后进行json解析
+        //删除字符串多余字符串
+        NSRange range = NSMakeRange(0, 19);
+        [ip deleteCharactersInRange:range];
+        NSString * nowIp =[ip substringToIndex:ip.length-1];
+        //将字符串转换成二进制进行Json解析
+        NSData * data = [nowIp dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary * dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        return dict[@"cip"];
     }
-    return nil;
+    // get请求
+//    NSError *error;
+//    NSMutableString *ipp = [NSMutableString stringWithContentsOfURL:[NSURL URLWithString:@"http://ip.taobao.com/service/getIpInfo.php?ip=myip"] encoding:NSUTF8StringEncoding error:&error];
+//    NSError *err;
+//    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:[ipp dataUsingEncoding:NSUTF8StringEncoding]
+//                                                        options:NSJSONReadingMutableContainers
+//                                                          error:&err];
+//    NSLog(@"\nip:%@\n",ipp);
+//    NSLog(@"\ndic:%@\n",dic);
+//    if ([Helper justDictionary:dic]&&[dic[@"code"] integerValue] == 0) {
+//        return dic[@"data"][@"ip"];
+//    } else {
+//        return @"";
+//    }
+    
+    return @"";
 }
 
+-(void)firstResponder {}
+// 把文本生成链接
++ (NSMutableAttributedString*)setAttributedString:(NSString*) attrString  selectStrings:(NSArray<NSString*> * ) selectString {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:attrString];
+    for (int i = 0; i<selectString.count; i++) {
+        [attributedString addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"select%d://",i] range:[[attributedString string] rangeOfString:selectString[i]]];
+    }
+    // 改变字体的行间距
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 8;// 字体的行间距
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, attrString.length)];
+    return attributedString;
+}
 @end

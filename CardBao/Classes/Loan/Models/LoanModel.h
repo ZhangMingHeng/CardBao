@@ -53,4 +53,7 @@
 // 授信订单号
 @property (nonatomic, strong) NSString *creditNo;
 
+// 风控拒绝时间
+@property (nonatomic, strong) NSString *validityDate;
+
 @end

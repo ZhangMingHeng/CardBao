@@ -12,7 +12,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIViewController (NSObject)
--(void)setNavigationViewTitle:(NSString* _Nonnull) title hiddenBackButton:(BOOL) isHidden;
+-(void)setNavigationViewTitle:(NSString* _Nonnull) title
+             hiddenBackButton:(BOOL) isHidden
+              backgroundColor:(UIColor*_Nullable)color;
 
 @end
 

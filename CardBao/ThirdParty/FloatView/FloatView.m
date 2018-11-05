@@ -66,16 +66,16 @@
     textLabel.textAlignment=NSTextAlignmentCenter;
     textLabel.font=[UIFont systemFontOfSize:14];
     textLabel.textColor=[UIColor whiteColor];
-    textLabel.numberOfLines = 2;
+    textLabel.numberOfLines = 3;
     textLabel.text=_message;
 //    UIImageView *icon = [[UIImageView alloc]initWithFrame:CGRectMake((self.frame.size.width-30)/2, 32, 30, 30)];
 //    icon.image = _imageView;
 //    [self addSubview:icon];
     CGRect textLabelRect=[textLabel.text boundingRectWithSize:CGSizeMake(0,0) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:textLabel.font} context:nil];//自适应宽度和高度
     // 计算文字和self 的布局
-    CGFloat selfWidth = textLabelRect.size.width>(screenWidth/2)?(screenWidth/2)+20:textLabelRect.size.width+20;
+    CGFloat selfWidth = textLabelRect.size.width>(screenWidth*2/3)?(screenWidth*2/3)+20:textLabelRect.size.width+20;
     self.frame = CGRectMake((screenWidth-selfWidth)/2, (screenHeight-30)/2, selfWidth, 60);
-    textLabel.frame=CGRectMake(3 ,0, self.frame.size.width-6, 60);
+    textLabel.frame=CGRectMake(3 ,0, self.frame.size.width-6, CGRectGetHeight(self.frame));
 //    if (!_isFullScreen){
 //        
 //    }

@@ -49,8 +49,15 @@
 //身份证号
 + (BOOL) justIdentityCard: (NSString *)identityCard;
 
+// 检验银行卡
++ (BOOL) justBankCardNo:(NSString*) cardNo;
+
 // 字典判断是否为空
 + (BOOL) justDictionary:(id)dictionary;
+
+// 数组判断是否为空
++ (BOOL) justArray:(id)array;
+
 // 通用正则删除
 + (NSString *)filterCharactor:(NSString *)string withRegex:(NSString *)regexStr;
 
@@ -71,7 +78,8 @@
 +(void)removeAlertMessage;
 
 +(NSDictionary*)getAbnormalData;
-
+// 获取外网ip
++(NSString *)deviceWANIPAddress;
 // 行距设置
 + (void) setSpaceNum:(NSString *) contentText obj:(UILabel*)label;
 // 取消 第一响应
@@ -79,19 +87,10 @@
 //比较时间
 + (NSDateComponents *)compareDateWithPastDate:(NSDate *)pastDate futureDate:(NSDate *)futureDate;
 + (NSDateComponents *)compareDateWithPastDateStr:(NSString *)pastDateStr futureDateStr:(NSString *)futureDateStr;
-//取userDefault的值
-//类型枚举
-typedef NS_ENUM(NSUInteger, TWUserDefaultType) {
-    TWUserDefaultTypeValues,
-    TWUserDefaultTypeId,
-    TWUserDefaultTypeObject,
-    TWUserDefaultTypeBOOL,
-    TWUserDefaultTypeNSInteger,
-    TWUserDefaultTypeFloat,
-    TWUserDefaultTypeDouble,
-    TWUserDefaultTypeURL
-};
-+ (id)getUserDefaultWithKey:(NSString *)key type:(TWUserDefaultType)type;
+
+// 把文本生成链接
++ (NSMutableAttributedString*)setAttributedString:(NSString*) attrString  selectStrings:(NSArray<NSString*> * ) selectString;
+
 @end
 
 

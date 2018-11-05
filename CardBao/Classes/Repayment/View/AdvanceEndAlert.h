@@ -13,6 +13,7 @@
 @property(nonatomic, strong) NSString *moneyNum;
 @property(nonatomic, strong) NSString *interestNum;
 @property(nonatomic, strong) NSString *feeNum;
+@property(nonatomic, strong) NSString *damageNum;
 
 @property(nonatomic) void (^event)(NSInteger index); // index 1 取消， 2确定
 @end

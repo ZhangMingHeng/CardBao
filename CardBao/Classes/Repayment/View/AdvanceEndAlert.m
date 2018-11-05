@@ -19,6 +19,7 @@
     UILabel *moneyLabel; // 本金
     UILabel *interestLabel; // 利息
     UILabel *feeLabel; // 手续费
+    UILabel *damagLabel; // 违约金
     
 }
 @end
@@ -41,7 +42,7 @@
     [self setupAlertView];
 }
 - (void)setupAlertView {
-    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(20, DYCalculateHeigh(160), WIDTH-40, 320)];
+    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(20, DYCalculateHeigh(160), WIDTH-40, 330)];
     backView.backgroundColor    = [UIColor whiteColor];
     backView.layer.cornerRadius = 10;
     backView.clipsToBounds      = YES;
@@ -58,7 +59,7 @@
     [backView addSubview:totalLabel];
     
     //边框
-    UIView *borderView = [[UIView alloc]initWithFrame:CGRectMake(15, CGRectGetMaxY(totalLabel.frame)+15, CGRectGetWidth(backView.frame)-30,115)];
+    UIView *borderView = [[UIView alloc]initWithFrame:CGRectMake(15, CGRectGetMaxY(totalLabel.frame)+15, CGRectGetWidth(backView.frame)-30,145)];
     borderView.layer.borderWidth = 1;
     borderView.layer.borderColor = HomeColor.CGColor;
     [backView addSubview:borderView];
@@ -72,9 +73,13 @@
     // 手续费
     feeLabel = [[UILabel alloc]initWithFrame:CGRectMake(30, CGRectGetMaxY(interestLabel.frame)+20, CGRectGetWidth(backView.frame)-30, 15)];
     [backView addSubview:feeLabel];
+    // 违约金
+    damagLabel = [[UILabel alloc]initWithFrame:CGRectMake(30, CGRectGetMaxY(feeLabel.frame)+20, CGRectGetWidth(backView.frame)-30, 15)];
+    [backView addSubview:damagLabel];
+    
     
     // tips
-    UILabel *tipsLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, CGRectGetMaxY(feeLabel.frame)+30, CGRectGetWidth(backView.frame)-10, 40)];
+    UILabel *tipsLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, CGRectGetMaxY(damagLabel.frame)+15, CGRectGetWidth(backView.frame)-10, 40)];
     tipsLabel.text          = @"提前结清手续费：剩余本金*3%（不足100按100计）";
     tipsLabel.numberOfLines = 0;
     tipsLabel.font          = [UIFont systemFontOfSize:13];
@@ -111,5 +116,8 @@
 }
 -(void)setFeeNum:(NSString *)feeNum {
     feeLabel.text = [NSString stringWithFormat:@"%@",feeNum];
+}
+-(void)setDamageNum:(NSString *)damageNum {
+    damagLabel.text = [NSString stringWithFormat:@"%@",damageNum];
 }
 @end

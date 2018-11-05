@@ -121,6 +121,7 @@
 // 释放监听者
 -(void)dealloc {
     [self removeObserver:self forKeyPath:@"self.iconImgView.image"];
+    [self removeObserver:self forKeyPath:@"self.dateLabel.text"];
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

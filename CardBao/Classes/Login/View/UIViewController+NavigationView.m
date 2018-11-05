@@ -14,7 +14,7 @@
 
 @implementation UIViewController (NSObject)
 
--(void)setNavigationViewTitle:(NSString* _Nonnull) title hiddenBackButton:(BOOL) isHidden {
+-(void)setNavigationViewTitle:(NSString* _Nonnull) title hiddenBackButton:(BOOL) isHidden backgroundColor:(UIColor*_Nullable)color{
 
     CGFloat stateHeight = [self statusHeight];
     
@@ -25,6 +25,7 @@
     UIView *backView = [UIView new];
     [self.view addSubview:backView];
     [self.view bringSubviewToFront:backView]; // 置为最上层
+    backView.backgroundColor = color;
     
     // title
     UILabel *navigateTitle      = [UILabel new];
@@ -37,13 +38,13 @@
     
     [navigateTitle mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(backView);
-        make.top.equalTo(backView);
-        make.height.mas_equalTo(stateHeight==88?44:40);
+        make.top.equalTo(backView).offset(stateHeight==88?44:20);
+        make.height.mas_equalTo(44);
     }];
     [backView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.view);
-        make.top.equalTo(self.view).offset(stateHeight==88?44:20);
-        make.height.mas_equalTo(stateHeight==88?44:40);
+        make.top.equalTo(self.view);
+        make.height.mas_equalTo(stateHeight==88?88:64);
     }];
     
     if (isHidden) return; // 是否隐藏按钮

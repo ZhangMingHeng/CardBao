@@ -37,6 +37,10 @@
 #import <ZJPickerView.h>
 // 自定义导航栏
 #import "UIViewController+NavigationView.h"
+// 定位
+#import "LocationManager.h"
+//
+//#import "DeviceInfoUtil.h"
 
 //************************** 引入常用的头文件 End **************************//
 
@@ -51,33 +55,106 @@
 // 开发环境
 
 // 登录注册
-// 注册登录获取验证码
+// 登录
+#define LOGIN_INTERFACE Host_And_Port@"user/login"
+// 注册、登录、忘记密码获取验证码
 #define GETCODE_INTERFACE Host_And_Port@"user/auth/code"
 // 注册
 #define REGISTER_INTERFACE Host_And_Port@"user/register"
 // 忘记密码
-#define FORGET_INTERFACE Host_And_Port@"user/forget"
-// 登录
-#define LOGIN_INTERFACE Host_And_Port@"user/login"
+#define FORGET_INTERFACE Host_And_Port@"/user/forgetPassSms"
 // 验证码登录
 #define CODELOGIN_INTERFACE Host_And_Port@"user/loginSms"
+// 修改密码
+#define CHANGEPASSWORD_INTERFACE Host_And_Port@"user/update/pass"
 
 
 // 借款首页
 #define BASEINFO_INTERFACE Host_And_Port@"user/base/info"
+// 喇叭数据
+#define HORNINFO_INTERFACE Host_And_Port@"loanmsg/list"
 
 
 // 授信流程接口
 // 创建授信订单接口
-#define CREATECREDITORDER_INTERFACE Host_And_Port@"credit/create"
+#define CREATECREDITORDER_INTERFACE Host_And_Port@"user/credit"
 // 资料上传
 #define FILEUPLOAD_INTERFACE Host_And_Port@"data/upload"
+// 保存身份信息
+#define SAVEIDCARDINFO_INTERFACE Host_And_Port@"user/check/idcard"
+// 创建授信订单
+#define CREATECREDIT_INTERFACE Host_And_Port@"credit/create"
+// 获取绑定银行卡的验证码
+#define GETBANKCARDMSG_INTERFACE Host_And_Port@"card/msg"
+// 验证短信码并绑卡
+#define BINDBANKCARD_INTERFACE Host_And_Port@"card/valid"
+// 不发短信绑银行卡
+#define BINDBANKCARDNO_INTERFACE Host_And_Port@"card/bind"
+// 获取支持的银行列表
+#define GETBANKCARDLIST_INTERFACE Host_And_Port@"bank/listall"
+// 获取学历信息
+#define GETDEGREEINFO_INTERFACE Host_And_Port@"static/degree"
+// 获取居住情况
+#define GETLIVEINFO_INTERFACE Host_And_Port@"static/residentialstatus"
+// 婚姻状况
+#define GETMARRIAGEINFO_INTERFACE Host_And_Port@"static/marrstatus"
+// 联系人关系
+#define GETCONTACTRELATION_INTERFACE Host_And_Port@"static/contactrelation"
+// 所属行业
+#define GETINDUSTRYINFO_INTERFACE Host_And_Port@"static/industry"
+// 单位职能
+#define GETJOBRANK_INTERFACE Host_And_Port@"static/jobrank"
+// 保存基本信息,单位信息接口
+#define SUBMITBAISCINFO_INTERFACE Host_And_Port@"basic/info"
+// 获取运营商H5页面
+#define OPERATOCRH5_INTERFACE Host_And_Port@"juxinli/url"
+// 提交运营商授权成功了
+#define SUBMITOPERATOCRSUCCESS_INTERFACE Host_And_Port@"juxinli/success"
+// 查看基本信息数据
+#define GETBASICINFO_INTERFACE Host_And_Port@"user/baseinfo"
+// 更新基本信息
+#define UPDATEBASICINFO_INTERFACE Host_And_Port@"user/update/userinfo"
+// 信息确认，并发送授信验证码
+#define GETCREDITMSG_INTERFACE Host_And_Port@"credit/msg"
+// 提交授信，并验证验证码
+#define GETCREDITVALID_INTERFACE Host_And_Port@"credit/valid"
 
 // 申请借款接口
+// 申请借款配置详情
+#define GETLOANDETAILS_INTERFACE Host_And_Port@"loanrecord/loan"
+// 借款用途
+#define GETLOANOFUSE_INTERFACE Host_And_Port@"static/loanofuse"
 // 放款 获取验证码
 #define LOANGETCODE_INTERFACE Host_And_Port@"loan/msg"
+// 放款 验证验证码，并提交
+#define LOANVALIDCODE_INTERFACE Host_And_Port@"loan/valid"
+// 放款 查看还款计划，贷款试算接口
+#define LOANPLAN_INTERFACE Host_And_Port@"loan/loantrial"
+
 
 //还款接口
+// 根据还款状态查询还款列表
+#define GETREPAYMENTLIST_INTERFACE Host_And_Port@"loanrecord/loan/status"
+// 根据还款Id 查询还款详情
+#define GETREPAYMENTDETAILS_INTERFACE Host_And_Port@"loanrecord/loan/repay"
+// 根据还款Id 查询还款计划
+#define GETREPAYMENTPLAN_INTERFACE Host_And_Port@"loanrecord/loan/repayinfo"
+// 提前结清试算接口
+#define GETREPAYMENTSTATEMENTS_INTERFACE Host_And_Port@"loanrecord/loan/advancerepay"
+// 提前、立即还款接口
+#define SUBMITREPAYMENT_INTERFACE Host_And_Port@"repay/submit"
+
+
+// 我的页面主接口
+#define GETMYTOTALMONEY_INTERFACE Host_And_Port@"loansub/loansublist"
+// 查询用户借款记录
+#define GETLOANRECORD_INTERFACE Host_And_Port@"loanrecord/getlist"
+// 查询用户银行卡
+#define GETBANKCARDINFO_INTERFACE Host_And_Port@"bankcard/info"
+// 意见反馈接口
+#define SUBMITFEEDBACK_INTERFACE Host_And_Port@"user/insert/suggest"
+// 客户电话
+#define GETCUSTOMERPHONE_INTERFACE Host_And_Port@"static/consumer"
 
 
 //************************** 网络接口 End **************************//
@@ -100,9 +177,8 @@
 #define DYCalculateHeigh(size) (size / 667.0 * screenHeight)
 // buglyID
 #define BUGLYAPPID @"123456"
-// 产品编号
-#define PRODUCTNO @"1233455"
-
+// url schemes
+#define URLSCHEMES @"cardapp://success"
 
 
 //************************** 常量 End **************************//

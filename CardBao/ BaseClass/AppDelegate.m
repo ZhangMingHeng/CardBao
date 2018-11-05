@@ -48,8 +48,13 @@
     //***************    腾讯BuglySDK end    ***************//
     
     
-    
-    
+    //***************    定位 start    ***************//
+    [[LocationManager shareInstance] requestLocation:(UIViewController*)self.window resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+        if (code == 0) {
+        }
+    }];
+    //***************    定位 end     ***************//
+
     // 设置Window为主窗口并显示出来
     [self.window makeKeyAndVisible];
     
@@ -57,7 +62,11 @@
     
     return YES;
 }
-
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
+    NSLog(@"url : %@", url.absoluteString);
+    self.appURL = url.absoluteString;
+    return YES;
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

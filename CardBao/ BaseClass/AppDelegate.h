@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) DYNavigationController *navigationVC;
+@property (strong, nonatomic) NSString *appURL;
 
 @end
 

@@ -137,7 +137,7 @@
 
 // 设置样式
 -(void)setIndex:(NSInteger)index {
-    
+    _index = index;
     _pointOne.textColor = _pointTwo.textColor = [UIColor whiteColor];
     
     _pointOne.backgroundColor = index==0?SelecetColor:UnSelecetColor;

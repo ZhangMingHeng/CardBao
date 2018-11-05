@@ -280,12 +280,12 @@ static NSString *FoldingSectionHeaderID = @"FoldingSectionHeader";
     if (rowArray.count) {
         if (currentIsOpen) {
             // 合并
-            [self deleteRowsAtIndexPaths:[NSArray arrayWithArray:rowArray] withRowAnimation:UITableViewRowAnimationFade];
+            [self deleteRowsAtIndexPaths:[NSArray arrayWithArray:rowArray] withRowAnimation:UITableViewRowAnimationNone];
         }else{
             // 展开
-            [self insertRowsAtIndexPaths:[NSArray arrayWithArray:rowArray] withRowAnimation:UITableViewRowAnimationFade];
+            [self insertRowsAtIndexPaths:[NSArray arrayWithArray:rowArray] withRowAnimation:UITableViewRowAnimationNone];
             if (rowArray.count>0&&rowArray!=nil) {
-                [self scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index] atScrollPosition:UITableViewScrollPositionTop animated:YES];//把最新的数据全部自动显示输出（自动滚出来的）
+                [self scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index] atScrollPosition:UITableViewScrollPositionTop animated:NO];//把最新的数据全部自动显示输出（自动滚出来的）
             }
         }
     }

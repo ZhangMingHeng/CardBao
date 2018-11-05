@@ -9,7 +9,7 @@
 #import "TextLoopView.h"
 @interface TextLoopView ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) NSArray *dataSource;
-@property (nonatomic, weak) UITableView *tableView;
+//@property (nonatomic, weak) UITableView *tableView;
 @property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, strong) NSTimer *myTimer;
 @property (nonatomic, assign) NSInteger currentRowIndex;
@@ -84,16 +84,16 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self == [super initWithFrame:frame]) {
         // tableView
-        UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        _tableView = tableView;
-        tableView.dataSource = self;
-        tableView.delegate = self;
-        tableView.showsVerticalScrollIndicator = NO;
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+//        _tableView = tableView;
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        _tableView.showsVerticalScrollIndicator = NO;
         // 关闭 滚动效果
-        tableView.scrollEnabled = NO;
-        tableView.rowHeight = frame.size.height;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [self addSubview:tableView];
+        _tableView.scrollEnabled = NO;
+        _tableView.rowHeight = frame.size.height;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        [self addSubview:_tableView];
     }
     return self;
 }
@@ -102,7 +102,13 @@
     self.currentRowIndex++;
     [self.tableView setContentOffset:CGPointMake(0, _currentRowIndex * _tableView.rowHeight) animated:YES];
 }
-
+-(void)reloadDataWith:(NSArray *)dataSource {
+    if (dataSource.count>0) {
+        self.dataSource = dataSource;
+        [self.tableView reloadData];
+    }
+    
+}
 
 
 /*

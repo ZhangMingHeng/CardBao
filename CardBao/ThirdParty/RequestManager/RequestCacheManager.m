@@ -22,7 +22,7 @@
     }
     return self;
 }
-//根据url和参数创建路径
+//根据url、手机号码和参数创建路径
 -(void)cacheFilePath:(NSString*) url parameters:(nonnull id)parameters{
     
     NSString *cacheFileName = [self cacheFileName:url parameters:parameters];
@@ -39,7 +39,7 @@
 //将请求路径和参数拼接成文件名称
 - (NSString *)cacheFileName:(NSString*) url parameters:(nonnull id)parameters{
     
-    NSString *requestInfo = [NSString stringWithFormat:@"%@%@",url, parameters];
+    NSString *requestInfo = [NSString stringWithFormat:@"%@%@%@",kUserPHONE,url, parameters];
 
     return [RequestUtils md5StringFromString:requestInfo];
     

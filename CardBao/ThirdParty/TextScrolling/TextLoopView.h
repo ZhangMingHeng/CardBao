@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 typedef void(^selectTextBlock)(NSString *selectString, NSInteger index);
 @interface TextLoopView : UIView
+@property (nonatomic, strong) UITableView *tableView;
 /**
  直接调用这个方法
  
@@ -17,4 +18,5 @@ typedef void(^selectTextBlock)(NSString *selectString, NSInteger index);
  @param frame 控件大小
  */
 + (instancetype)textLoopViewWith:(NSArray *)dataSource loopInterval:(NSTimeInterval)timeInterval initWithFrame:(CGRect)frame selectBlock:(selectTextBlock)selectBlock;
+-(void)reloadDataWith:(NSArray *)dataSource;
 @end

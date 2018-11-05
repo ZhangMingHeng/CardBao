@@ -42,7 +42,11 @@ typedef void (^httpRequestWarn)(RequestManager * _Nonnull manage,id _Nonnull mod
 -(NSURLSessionDataTask*_Nonnull)postWithURL:(NSString*_Nonnull) urlString parameters:(id _Nullable )parameters isLoading:(BOOL) isLoad loadTitle:(NSString*_Nullable) title addLoadToView:(UIView*_Nullable) view andWithSuccess:(httpRequestSuccsess _Nonnull )success andWithWarn:(httpRequestWarn _Nonnull )warn andWithFaile:(httpRequestFaile _Nonnull )faile isCache:(BOOL) isCache;
 
 // 上传文件
--(NSURLSessionDataTask*_Nonnull)upLoadPostWithUR:(NSString*_Nonnull) urlString parameters:(id _Nullable )parameters andWithSuccess:(httpRequestSuccsess _Nonnull )success andWithFaile:(httpRequestFaile _Nonnull )faile;
+-(NSURLSessionDataTask*_Nonnull)upLoadPostWithUR:(NSString*_Nonnull) urlString file:(id _Nonnull )file fileType:(NSString* _Nonnull )fileType parameters:(id _Nullable )parameters isLoading:(BOOL) isLoad addLoadToView:(UIView*_Nullable) view andWithSuccess:(httpRequestSuccsess _Nonnull )success andWithFaile:(httpRequestFaile _Nonnull )faile;
 
-
+//// 给第三方faceId开个小灶
+//-(NSURLSessionDataTask*_Nonnull)postWithFaceIDURL:(NSString*_Nonnull) urlString parameters:(id _Nullable )parameters isLoading:(BOOL) isLoad loadTitle:(NSString*_Nullable) title addLoadToView:(UIView*_Nullable) view andWithSuccess:(httpRequestSuccsess _Nonnull )success;
+//
+//// 给第三方faceId开个小灶
+//-(NSURLSessionDataTask*_Nonnull)postWithFaceIDLiveURl:(NSString*_Nonnull) urlString file:(id _Nonnull )file fileType:(NSString* _Nonnull )fileType parameters:(id _Nullable )parameters isLoading:(BOOL) isLoad addLoadToView:(UIView*_Nullable) view andWithSuccess:(httpRequestSuccsess _Nonnull )success andWithFaile:(httpRequestFaile _Nonnull )faile;
 @end
