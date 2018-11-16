@@ -170,7 +170,7 @@
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
-        BLYLogInfo(@"单张图片上传成功: %@", dic);
+        BLYLogInfo(@"单张图片上传结果: %@", dic);
 //        BLYLogInfo(@"\n\n**********Start****************\n请求后Url:\n%@ \nparameters:\n%@ \n\nresponseObject:\n%@\n**********End***********\n\n",urlString,parameters,dicJson);
         success(self,dic);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -219,12 +219,12 @@
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"yyyyMMddHHmmss";
         NSString *str = [formatter stringFromDate:[NSDate date]];
-        NSString *imageFileName = [NSString stringWithFormat:@"%@%luld.%@",str, (unsigned long)index, imageType?:@"jpg"];
+        NSString *imageFileName = [NSString stringWithFormat:@"%@%luld.%@",str, (unsigned long)index, imageType?:@"png"];
         
         [formData appendPartWithFileData:imageData
                                     name:@"file"
-                                fileName:fileNames ? [NSString stringWithFormat:@"%@.%@",fileNames[index],imageType?:@"jpg"] : imageFileName
-                                mimeType:[NSString stringWithFormat:@"image/%@",imageType ?: @"jpg"]];
+                                fileName:fileNames ? [NSString stringWithFormat:@"%@.%@",fileNames[index],imageType?:@"png"] : imageFileName
+                                mimeType:[NSString stringWithFormat:@"image/%@",imageType ?: @"png"]];
         BLYLogInfo(@"上传图片 %lu 成功", (unsigned long)index);
     }
 }

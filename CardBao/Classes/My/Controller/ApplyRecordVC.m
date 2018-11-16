@@ -42,7 +42,7 @@
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
                 // UI线程
-                [Helper alertMessage:@"还没有去借款" addToView:self.view];
+                [Helper alertMessage:@"还没有去借款咯" addToView:self.view];
             });
         }
         [self->listTableView reloadData];

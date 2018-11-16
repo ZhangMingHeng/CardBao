@@ -19,6 +19,9 @@ typedef NS_ENUM(NSUInteger, NSprotocolViewPushType) {
 
 @property (nonatomic) NSprotocolViewPushType baseViewPushType;
 
+// 协议链接
+@property (nonatomic, strong) NSString *h5Url;
+
 @end
 
 NS_ASSUME_NONNULL_END

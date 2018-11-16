@@ -270,7 +270,6 @@
                                                                                          @"gpsCity":gpsCity}}];
     }
     
-    
     // comyName:公司名称  industry: 所属行业  officePhone: 公司电话
     // jobRank: 单位职能  comyAddrs: 公司地址 companyDetailAddress: 公司详细地址
     NSDictionary *companyInfo = @{@"comyName":self.basicModel.comyName,
@@ -347,11 +346,13 @@
         listTableView.tableFooterView = [UIView new];
         listTableView.tag             = i+3;
         listTableView.hidden          = i==0?NO:YES;
+        listTableView.backgroundColor = DYGrayColor(243);
+        listTableView.showsVerticalScrollIndicator = NO;
         [self.view addSubview:listTableView];
         
         // FootView
         UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, i==0?110:180)];
-        footView.backgroundColor = DYGrayColor(231);
+//        footView.backgroundColor = DYGrayColor(231);
         // 上一步按钮
         UIButton *lastButton = [UIButton buttonWithType:UIButtonTypeCustom];
         lastButton.layer.cornerRadius = 20;
@@ -407,9 +408,7 @@
     UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:idF];
     cell.selectionStyle   = UITableViewCellSelectionStyleNone;
     cell.accessoryType    = UITableViewCellAccessoryDisclosureIndicator;
-    
-    
-    
+
     if (tableView == listTableView) {
         cell.textLabel.text       = titleArrayOther[indexPath.row];
         // 输入框
@@ -558,6 +557,14 @@
     }
     
     [Helper resignTheFirstResponder];
+}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    // 禁止下滑
+    CGPoint offset = scrollView.contentOffset;
+    if (offset.y < 0) {
+        offset.y = 0;
+    }
+    scrollView.contentOffset = offset;
 }
 -(void)nextClick:(UIButton*)sender {
     if (sender.tag == 5) {

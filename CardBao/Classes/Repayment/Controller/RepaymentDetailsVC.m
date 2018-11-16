@@ -25,10 +25,10 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self getUI];
-    [self requestData];
+    [self requestData:YES];
 }
--(void)requestData {
-    [[RequestManager shareInstance]postWithURL:GETREPAYMENTDETAILS_INTERFACE parameters:@{@"id":[NSNumber numberWithInteger:self.iId]} isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+-(void)requestData:(BOOL)loading {
+    [[RequestManager shareInstance]postWithURL:GETREPAYMENTDETAILS_INTERFACE parameters:@{@"id":[NSNumber numberWithInteger:self.iId]} isLoading:loading loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
         if ([Helper justDictionary:model]) {
             self->detailsModel = [RepaymentDetailsModel yy_modelWithJSON:model];
@@ -39,10 +39,11 @@
             });
         }
         [self->listTableView reloadData];
+        [self->listTableView.mj_header endRefreshing];
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
+        [self->listTableView.mj_header endRefreshing];
     } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
+        [self->listTableView.mj_header endRefreshing];
     } isCache:NO];
 }
 #pragma mark GETUI
@@ -58,10 +59,12 @@
     listTableView.delegate           = self;
     listTableView.estimatedRowHeight = 200;
     listTableView.backgroundColor    = DYGrayColor(243);
-    listTableView.scrollEnabled      = NO;
+//    listTableView.scrollEnabled      = NO;
     listTableView.tableFooterView    = [UIView new];
     [self.view addSubview:listTableView];
-    
+    listTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self requestData:NO];
+    }];
     [listTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_offset(UIEdgeInsetsZero);
     }];
@@ -124,11 +127,11 @@
     return  cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 2||(indexPath.section == 1&&[detailsModel.currentStatus isEqualToString:@"0"])) {
         RepaymentPlanVC *planVC = [RepaymentPlanVC new];
         planVC.iId              = self.iId;
         [self.navigationController pushViewController:planVC animated:YES];
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 -(void)initSectionOne:(UITableViewCell*)cell {

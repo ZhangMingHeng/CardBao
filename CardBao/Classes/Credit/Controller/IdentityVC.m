@@ -59,10 +59,11 @@
     contactDic = [[NSMutableDictionary alloc]init];
     
     // 调用通讯录类
+    NSMutableArray *contactArray = [NSMutableArray new];
     [[ContactData shareInstance]requestContactAuthorAfter:self resultBlock:^(ContactData * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
         BLYLogInfo(@"\n\nContactresult:%@\n\n",result);
-        
-        [self->contactDic setValue:@[result] forKey:@"data"];
+        [contactArray addObject:result];
+        if (!self->contactDic[@"data"]) [self->contactDic setValue:contactArray forKey:@"data"];
         
     }];
     
@@ -290,8 +291,8 @@
                 });
             } else {
                 if (tag == 10||tag == 11) {
-                    self.identityModel.idcardPortraitImage = file;
-                    self.identityModel.idcardEmblemImage  = file;
+                    self.identityModel.idcardPortraitImage = [UIImage new];
+                    self.identityModel.idcardEmblemImage  = [UIImage new];
                 }
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // UI线程
@@ -314,7 +315,7 @@
 #pragma mark 跳转到下一步
 -(void)nextClick:(UIButton*)sender {
     
-    if (!self.identityModel.idcardEmblemImage||!self.identityModel.idcardPortraitImage||!self.identityModel.userImage||!self.identityModel.handheldImage) {
+    if (!UIImagePNGRepresentation(self.identityModel.idcardEmblemImage)||!UIImagePNGRepresentation(self.identityModel.idcardPortraitImage)||!self.identityModel.userImage||!self.identityModel.handheldImage) {
         dispatch_async(dispatch_get_main_queue(), ^{
             // UI线程
             [Helper alertMessage:@"请上传身份证、头像照片" addToView:self.view];
@@ -341,7 +342,10 @@
     dispatch_group_enter(group);
     dispatch_group_async(group, queue, ^{
 //          imageType:类型 communication:通讯录数据
-        
+        if (self->contactDic.count==0) {
+            [Helper alertMessage:@"获取通讯录失败" addToView:self.view];
+            return ;
+        }
         NSError *error;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self->contactDic options:NSJSONWritingPrettyPrinted error:&error];
         NSString *jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];

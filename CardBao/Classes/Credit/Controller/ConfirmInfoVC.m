@@ -176,8 +176,8 @@
     readLabel.scrollEnabled      = NO;
     readLabel.delegate           = self;
     readLabel.editable           = NO;
-    readLabel.attributedText     = [Helper setAttributedString:@"我已阅读并同意《包商银行个人信息查询协议》《个人信息使用及第三方机构数据授权查询书》"
-                                                 selectStrings:@[@"《包商银行个人信息查询协议》",@"《个人信息使用及第三方机构数据授权查询书》"]];
+    readLabel.attributedText     = [Helper setAttributedString:@"我已阅读并同意《个人信息使用及第三方机构数据授权查询书》《账户委托扣款授权书》《包商银行个人征信查询授权协议》"
+                                                 selectStrings:@[@"《个人信息使用及第三方机构数据授权查询书》",@"《账户委托扣款授权书》",@"《包商银行个人征信查询授权协议》"]];
     readLabel.font               = [UIFont systemFontOfSize:17.0];
     readLabel.backgroundColor    = [UIColor clearColor];
     [footView addSubview:readLabel];
@@ -211,7 +211,7 @@
         make.height.mas_equalTo(45);
         make.left.equalTo(footView).offset(37);
         make.right.equalTo(footView).offset(-37);
-        make.top.equalTo(readLabel.mas_bottom).offset(30);
+        make.bottom.equalTo(footView.mas_bottom).offset(-15);
     }];
 }
 #pragma mark TableView protocol
@@ -348,10 +348,16 @@
     [self.navigationController pushViewController:webVC animated:YES];
     
     if ([[URL scheme] isEqualToString:@"select0"]) {
-        webVC.title = @"包商银行个人信息查询协议";
+        webVC.title = @"个人信息使用及第三方机构数据授权查询书";
+        webVC.h5Url = GETUSEANDYQUERYPROTOCOL_INTERFACE;
         return NO;
     } else if ([[URL scheme] isEqualToString:@"select1"]) {
-        webVC.title = @"个人信息使用及第三方机构数据授权查询书";
+        webVC.title = @"账户委托扣款授权书";
+        webVC.h5Url = GETAUTOMATICPROTOCOL_INTERFACE;
+        return NO;
+    } else if ([[URL scheme] isEqualToString:@"select2"]) {
+        webVC.title = @"包商银行个人征信查询授权协议";
+        webVC.h5Url = GETCREDITPROTOCOL_INTERFACE;
         return NO;
     }
     return YES;

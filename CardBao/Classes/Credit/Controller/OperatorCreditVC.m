@@ -126,7 +126,8 @@
 }
 -(void)requestSuccess {
     // 提交授权成功
-    [[RequestManager shareInstance] postWithURL:SUBMITOPERATOCRSUCCESS_INTERFACE parameters:nil isLoading:self loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+//    [Helper alertMessage:@"授权成功,跳转中..." addToView:self.view];
+    [[RequestManager shareInstance] postWithURL:SUBMITOPERATOCRSUCCESS_INTERFACE parameters:nil isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
 //        if ([Helper justDictionary:model]) {
 //

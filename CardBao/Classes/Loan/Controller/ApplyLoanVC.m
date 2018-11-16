@@ -12,9 +12,10 @@
 #import "CodeAlertView.h"
 #import "LoanSuccessVC.h"
 #import "ApplyLoanModel.h"
+#import "ProtocolWebViewVC.h"
 #import <AdSupport/AdSupport.h>
 
-@interface ApplyLoanVC ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
+@interface ApplyLoanVC ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate,UITextViewDelegate>
 {
     UITableView *listTableView;
     NSArray *titleArray;
@@ -123,7 +124,7 @@
     [self.view addSubview:listTableView];
 //    UIPickerView
     // FootView
-    UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 200)];
+    UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, screenWidth, 230)];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->listTableView.tableFooterView = footView;
     });
@@ -134,9 +135,16 @@
     [selectButton addTarget:self action:@selector(selectClick:) forControlEvents:UIControlEventTouchUpInside];
     [footView addSubview:selectButton];
     // 阅读文字
-    UILabel *readLabel      = [UILabel new];
-    readLabel.numberOfLines = 0;
-    readLabel.text          = @"我已阅读并同意《个人消费借款》《账户委托扣款授权书》《包商银行个人征信查询授权协议》";
+    UITextView *readLabel        = [UITextView new];
+    readLabel.linkTextAttributes = @{NSForegroundColorAttributeName:HomeColor};
+    readLabel.scrollEnabled      = NO;
+    readLabel.delegate           = self;
+    readLabel.editable           = NO;
+//    readLabel.numberOfLines = 0;
+    readLabel.attributedText     = [Helper setAttributedString:@"我已阅读并同意《个人消费借款》《个人信息使用及第三方机构数据授权查询书》《包商银行个人征信查询授权协议》"
+                                                 selectStrings:@[@"《个人消费借款》",@"《个人信息使用及第三方机构数据授权查询书》",@"《包商银行个人征信查询授权协议》"]];
+    readLabel.font               = [UIFont systemFontOfSize:17.0];
+    readLabel.backgroundColor    = [UIColor clearColor];
     [footView addSubview:readLabel];
     // 申请按钮
     UIButton *applyButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -166,7 +174,7 @@
         make.left.equalTo(footView).offset(25);
         make.right.equalTo(footView).offset(-25);
         make.height.mas_equalTo(45);
-        make.top.equalTo(readLabel.mas_bottom).offset(80);
+        make.bottom.equalTo(footView.mas_bottom).offset(-15);
     }];
 }
 #pragma mark TableView protocol
@@ -262,6 +270,10 @@
     } else if (indexPath.section == 0&&indexPath.row == 2) {
         // 选择期限
         showLimitPicker = YES;
+        if (![Helper justArray:applyModel.termList]) {
+            [Helper alertMessage:@"期限数据为空" addToView:self.view];
+            return;
+        }
         [self showPickerViewWithDataList:applyModel.termList tipLabelString:applyModel.creditTerm.length>0?applyModel.creditTerm:@"请选择期限"];
     } else if (indexPath.row == 0&&indexPath.section == 1) {
         // 选择用途
@@ -440,6 +452,29 @@
     NSInteger money = [[Helper isNullToString:applyModel.creditLimitAvailable returnString:@"0"] integerValue];
     if ([applyModel.creditMoney integerValue]>money) {
         [Helper alertMessage:[NSString stringWithFormat:@"申请金额最大限度为%ld",(long)money] addToView:self.view];
+        return NO;
+    }
+    return YES;
+}
+#pragma mark TextView Protocol
+-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    
+    ProtocolWebViewVC *webVC = [ProtocolWebViewVC new];
+    webVC.baseViewPushType   = NSprotocolViewPushTypeConfirm;
+    
+    [self.navigationController pushViewController:webVC animated:YES];
+    
+    if ([[URL scheme] isEqualToString:@"select0"]) {
+        webVC.title = @"个人消费借款合同";
+        webVC.h5Url = GETCONSUMPTIONPROTOCOL_INTERFACE;
+        return NO;
+    } else if ([[URL scheme] isEqualToString:@"select1"]) {
+        webVC.title = @"个人信息使用及第三方机构数据授权查询书";
+        webVC.h5Url = GETUSEANDYQUERYPROTOCOL_INTERFACE;
+        return NO;
+    } else if ([[URL scheme] isEqualToString:@"select2"]) {
+        webVC.title = @"包商银行个人征信查询授权协议";
+        webVC.h5Url = GETCREDITPROTOCOL_INTERFACE;
         return NO;
     }
     return YES;

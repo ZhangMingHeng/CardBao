@@ -100,12 +100,18 @@
 
 - (void)timer {
     self.currentRowIndex++;
-    [self.tableView setContentOffset:CGPointMake(0, _currentRowIndex * _tableView.rowHeight) animated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // UI线程
+        [self.tableView setContentOffset:CGPointMake(0, self.currentRowIndex * self.tableView.rowHeight) animated:YES];
+    });
 }
 -(void)reloadDataWith:(NSArray *)dataSource {
     if (dataSource.count>0) {
         self.dataSource = dataSource;
+        self.currentRowIndex = 0;
+        [self.tableView setContentOffset:CGPointZero ];
         [self.tableView reloadData];
+        
     }
     
 }

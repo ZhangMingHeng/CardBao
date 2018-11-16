@@ -236,7 +236,6 @@
     [[RequestManager shareInstance]postWithURL:LOGIN_INTERFACE parameters:parameters isLoading:YES loadTitle:@"登录中..." addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         NSDictionary *dic = model;
         if ([Helper justDictionary:dic]) {
-            
             NSString *token = dic[@"token"];
             if (token.length != 0 ) {
                 INPUTTOKEN(dic[@"token"]);

@@ -48,6 +48,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     hornArray = [NSMutableArray new];
+  
     [self getUI];
     [self requestData:YES];
     [self requestHornData];
@@ -57,7 +58,6 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
     
     if (isUpDate) [self requestData:NO];
     self->isUpDate = YES;
-    
 }
 #pragma mark requestData
 -(void)requestData:(BOOL)loading {
@@ -70,19 +70,22 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         }
 //        self.loanModel.availableCredit = @"1111";
 //        self.loanModel.validityDate = @"2018年11月10日";
-        self->_loanModel.step = 2;
+//        self->_loanModel.step = 5;
         dispatch_async(dispatch_get_main_queue(), ^{
             // UI线程
             [self.tableView reloadData];
         });
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         [self.tableView.mj_header endRefreshing];
+//        self->_loanModel = [LoanModel yy_modelWithDictionary:model];
+//        self.loanModel.availableCredit = @"1111";
+//        self.loanModel.step = 9;
     } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         [self.tableView.mj_header endRefreshing];
     } isCache:YES];
 }
 -(void)requestHornData {
-    [[RequestManager shareInstance]postWithURL:HORNINFO_INTERFACE parameters:nil isLoading:nil loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+    [[RequestManager shareInstance]postWithURL:HORNINFO_INTERFACE parameters:nil isLoading:NO loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
         if ([Helper justArray:model]) {
             [self->hornArray removeAllObjects];
@@ -296,6 +299,7 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         
     } else if (self.loanModel.step == BusinessStateDefault) {
         // 绑定银行卡  绑卡之前先创建授信
+        sender.enabled = NO;
         [[RequestManager shareInstance]postWithURL:CREATECREDITORDER_INTERFACE parameters:nil isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -303,10 +307,11 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
                 creditVC.viewPush = CreditViewPushBankCard;
                 [self.navigationController pushViewController:creditVC animated:YES];
             });
+            sender.enabled = YES;
         } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            
+            sender.enabled = YES;
         } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            
+            sender.enabled = YES;
         } isCache:NO];
         
         return;

@@ -50,9 +50,11 @@
 //#define Host_And_Port @"https://danyu.szfeiben.com/mobile/"
 
 // 测试服务器
-#define Host_And_Port @"http://139.129.220.247:8089/api/finance/"
+#define Host @"http://139.129.220.247:8089/"
 
-// 开发环境
+
+#define Host_And_Port Host@"api/finance/"
+
 
 // 登录注册
 // 登录
@@ -119,6 +121,7 @@
 // 提交授信，并验证验证码
 #define GETCREDITVALID_INTERFACE Host_And_Port@"credit/valid"
 
+
 // 申请借款接口
 // 申请借款配置详情
 #define GETLOANDETAILS_INTERFACE Host_And_Port@"loanrecord/loan"
@@ -157,6 +160,19 @@
 #define GETCUSTOMERPHONE_INTERFACE Host_And_Port@"static/consumer"
 
 
+// H5链接 (协议)
+// 注册协议
+#define GETREGISTERPROTOCOL_INTERFACE Host@"public/registered.html"
+// 个人消费借款合同
+#define GETCONSUMPTIONPROTOCOL_INTERFACE Host@"public/consumption.html"
+// 委托还款协议
+#define GETAUTOMATICPROTOCOL_INTERFACE Host@"public/automatic.html"
+// 个人征信查询
+#define GETCREDITPROTOCOL_INTERFACE Host@"public/credit.html"
+// 个人信息使用及第三方机构数据查询授权书
+#define GETUSEANDYQUERYPROTOCOL_INTERFACE Host@"public/personal.html"
+
+
 //************************** 网络接口 End **************************//
 
 //************************** 常量 Start **************************//
@@ -176,7 +192,7 @@
 #define DYCalculate(size) (size / 375.0 * screenWidth)
 #define DYCalculateHeigh(size) (size / 667.0 * screenHeight)
 // buglyID
-#define BUGLYAPPID @"123456"
+#define BUGLYAPPID @"20cd40c22e"
 // url schemes
 #define URLSCHEMES @"cardapp://success"
 

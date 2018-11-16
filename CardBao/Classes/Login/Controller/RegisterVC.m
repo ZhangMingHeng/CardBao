@@ -314,7 +314,10 @@
 #pragma mark TextView Protocol
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
     if ([[URL scheme] isEqualToString:@"select0"]) {
-        [self.navigationController pushViewController:[ProtocolWebViewVC new] animated:YES];
+//        [Helper alertMessage:@"开发中..." addToView:self.view];
+        ProtocolWebViewVC *webVC = [ProtocolWebViewVC new];
+        webVC.h5Url              = GETREGISTERPROTOCOL_INTERFACE;
+        [self.navigationController pushViewController:webVC animated:YES];
         return NO;
     }
     return YES;

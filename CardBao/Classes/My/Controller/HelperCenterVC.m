@@ -84,6 +84,7 @@
     cell.textLabel.font          = DYNormalFont;
     return  cell;
 }
+
 - (void )foldingTableView:(FoldingTableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // 点击cell
 }

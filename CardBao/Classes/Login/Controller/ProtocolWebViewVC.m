@@ -37,7 +37,7 @@
 }
 -(void)getUI {
     
-    NSURL *url = [NSURL URLWithString:@"https://www.baidu.com"];
+    NSURL *url = [NSURL URLWithString:self.h5Url];
     _webView = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:[WKWebViewConfiguration new]];
     [_webView loadRequest:[NSURLRequest requestWithURL:url]];
     [self.view addSubview:_webView];

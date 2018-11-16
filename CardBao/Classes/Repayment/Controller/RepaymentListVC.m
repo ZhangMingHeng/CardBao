@@ -45,10 +45,10 @@
     NSString *msg    = nil;
     if (_RepaymentState == NSRepaymentStateInRepayment){
         status = @"3";
-        msg    = @"你还没有去借款咯";
+        msg    = @"还没有去借款咯";
     } else {
         status = @"4";
-        msg    = @"你还没有去还款咯";
+        msg    = @"还没有去还款咯";
     }
     // status: 3-还款中  4-已结清
     [[RequestManager shareInstance]postWithURL:GETREPAYMENTLIST_INTERFACE parameters:@{@"status":status} isLoading:loading loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {

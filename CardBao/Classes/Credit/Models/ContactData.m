@@ -70,10 +70,7 @@
             
             [viewController.navigationController popViewControllerAnimated:YES];
         });
-        
     }
-    
-    
 }
 - (void)requestContactUI:(UIViewController* _Nonnull) viewController resultBlock:(requestPhoneNum _Nonnull) requestPhoneNum {
     // 判断当前设备的系统是否支持
@@ -120,7 +117,7 @@
     [self.parentViewController presentViewController: picker animated:YES completion:nil];
 }
 /**
- 逻辑:  在该代理方法中会调出手机通讯录界面, 选中联系人的手机号, 会将联系人姓名以及手机号赋值给界面上的TEXT1和TEXT2两个UITextFiled上.
+ 逻辑:  在该代理方法中会调出手机通讯录界面, 选中联系人的手机号,
  功能: 调用手机通讯录界面, 获取联系人姓名以及电话号码.
  */
 - (void)contactPicker:(CNContactPickerViewController *)picker didSelectContactProperty:(CNContactProperty *)contactProperty {
@@ -161,6 +158,8 @@
     CNContactFetchRequest *fetchRequest = [[CNContactFetchRequest alloc] initWithKeysToFetch:keysToFetch];
     CNContactStore *contactStore = [[CNContactStore alloc] init];
 //    NSMutableArray *contactArray = [NSMutableArray new];
+    NSInteger index = 0;
+    __block typeof(index) blockIndex = index;
     [contactStore enumerateContactsWithFetchRequest:fetchRequest error:nil usingBlock:^(CNContact * _Nonnull contact, BOOL * _Nonnull stop) {
 //        NSLog(@"-------------------------------------------------------");
         
@@ -181,7 +180,7 @@
             
             NSString * string = phoneNumber.stringValue ;
             
-            //去掉电话中的特殊字符
+            // 去掉电话中的特殊字符
             string = [string stringByReplacingOccurrencesOfString:@"+86" withString:@""];
             string = [string stringByReplacingOccurrencesOfString:@"-" withString:@""];
             string = [string stringByReplacingOccurrencesOfString:@"(" withString:@""];
@@ -190,20 +189,16 @@
             string = [string stringByReplacingOccurrencesOfString:@" " withString:@""];
             
             NSLog(@"姓名=%@, 电话号码是=%@", nameStr, string);
-            
+//            if (nameStr.length>0&&string.length>0)
             requestContact(self, 0, @{@"name":nameStr,@"phone":string,@"relationship":@"朋友"});
         }
-        
+        // 最多给两个条数据
+        if (blockIndex >200) {
             *stop = YES; // 停止循环，相当于break；
-
-        
+        }
+        blockIndex++;
     }];
-    
 }
-
-
-
-
 //提示没有通讯录权限
 - (void)showAlertViewAboutNotAuthorAccessContact{
     
