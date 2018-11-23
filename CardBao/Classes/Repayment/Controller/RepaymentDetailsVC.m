@@ -239,11 +239,10 @@
     alert.totalNum         = [NSString stringWithFormat:@"还款总额：%@元",model.total];
     alert.moneyNum         = [NSString stringWithFormat:@"剩余本金：%@元",model.principal];
     alert.interestNum      = [NSString stringWithFormat:@"剩余利息：%@元",model.interest];
-    alert.feeNum           = [NSString stringWithFormat:@"手续费：%@元",model.servicecharge];
+    alert.feeNum           = [NSString stringWithFormat:@"手续费：%@元",model.serviceCharge];
     alert.damageNum        = [NSString stringWithFormat:@"违约金：%@元",model.damage];
     alert.event = ^(NSInteger index) {
         // index 1 取消， 2确定
-        
         // 提前还款
         // repaymentType:01-提前还款 02-立即还款   id: 还款Id   repayMoney: 还款金额
         

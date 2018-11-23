@@ -11,7 +11,7 @@
 #import "LoanVC.h"
 #import "TabBarViewController.h"
 
-@interface TabBarViewController ()
+@interface TabBarViewController ()<UITabBarControllerDelegate>
 
 @end
 
@@ -20,7 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.tabBar.backgroundColor = [UIColor whiteColor];
-    
+    self.delegate               = self;
+    self.tabBar.translucent     = NO;
     // 导航栏
     DYNavigationController* loanNaVC      = [[DYNavigationController alloc]initWithRootViewController:[LoanVC new]];
     DYNavigationController* myNaVC = [[DYNavigationController alloc]initWithRootViewController:[MyVC new]];
@@ -54,7 +55,19 @@
     }
    
 }
-
+- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController {
+    // 是否为登录状态
+    if (!kLoginStatus&&tabBarController.viewControllers[1] == viewController) {
+        
+        AppDelegate *app   = (AppDelegate*)[UIApplication sharedApplication].delegate;
+        LoginVC *login     = [LoginVC new];
+        login.isAgainLogin = NO;
+        app.navigationVC   = [[DYNavigationController alloc]initWithRootViewController:login];
+        app.window.rootViewController = app.navigationVC;
+        return NO;
+    }
+    return YES;
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

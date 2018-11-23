@@ -45,6 +45,8 @@
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 位置数据
+    longitude = @"";
+    latitude  = @"";
     [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
         if (code == 0) {
             self->longitude   = result[@"longitude"]; // 经度
@@ -64,6 +66,20 @@
 }
 #pragma mark 请求数据
 -(void)requestData:(NSInteger) tag {
+    
+    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+        // 定位
+        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+            if (code == 0) {
+                self->longitude   = result[@"longitude"]; // 经度
+                self->latitude    = result[@"latitude"]; // 纬度
+                self->gpsCity     = [Helper isNullToString:result[@"gpsCity"] returnString:@"未知"]; // 城市
+                self->gpsProvince = [Helper isNullToString:result[@"gpsProvince"] returnString:@"未知"];// 省份
+            }
+        }];
+        return;
+    }
+    
     // 获取跳转页面的网址，如果授权成功了会返回code==5
     // deviceId: 设备Id   IMEI：imei   ip：IP地址 longiTude:经度 latiTude: 纬度  gpsCity: 城市
     // wifiMac:  wifimac  phoneModel: 手机型号  operationSys:操作系统 gpsProvince: 省份

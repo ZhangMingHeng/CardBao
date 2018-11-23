@@ -6,7 +6,6 @@
 //  Copyright © 2017年 Shenzhen Feiben Technology Co., Ltd. All rights reserved.
 //
 
-#import "LoginVC.h"
 #import "FloatView.h"
 #import "RequestManager.h"
 #import "RequestCacheManager.h"
@@ -26,7 +25,6 @@
         manage =[[RequestManager alloc]init];
         manage.lockRequest = [[NSLock alloc]init];
     });
-    
     manage.isCache = NO;
     return manage;
 }
@@ -296,7 +294,14 @@
     INPUTTOKEN(@"");
     
     AppDelegate *app = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    app.navigationVC = [[DYNavigationController alloc]initWithRootViewController:[LoginVC new]];
+//    UITabBarController *tabBC = (UITabBarController*)app.window.rootViewController;
+//    if ([tabBC isKindOfClass:[UITabBarController class]]) {
+//        UINavigationController *navC = tabBC.selectedViewController;
+//        [navC pushViewController:[LoginVC new] animated:YES];
+//    }
+    LoginVC *login     = [LoginVC new];
+    login.isAgainLogin = YES;
+    app.navigationVC = [[DYNavigationController alloc]initWithRootViewController:login];
     app.window.rootViewController = app.navigationVC;
 }
 @end

@@ -6,7 +6,6 @@
 //  Copyright © 2018年 andy_zhang. All rights reserved.
 //
 
-#import "LoginVC.h"
 #import "SettingVC.h"
 #import "AboutUSVC.h"
 #import "ChangePasswordVC.h"
@@ -20,6 +19,7 @@
     NSArray *localArray; // title and icon
     NSString *app_Version;
     NSMutableString *telePhone;
+    AppDelegate *app;
 }
 @end
 
@@ -28,6 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    app = (AppDelegate*)[UIApplication sharedApplication].delegate;
     [self loadLocalData];
     [self getUI];
     [self requestData];
@@ -172,9 +173,9 @@
     INPUTLoginState(NO);
     INPUTUserPHONE(@"");
     INPUTTOKEN(@"");
-    
-    AppDelegate *app = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    app.navigationVC = [[DYNavigationController alloc]initWithRootViewController:[LoginVC new]];
+    LoginVC *login     = [LoginVC new];
+    login.isAgainLogin = YES;
+    app.navigationVC   = [[DYNavigationController alloc]initWithRootViewController:login];
     app.window.rootViewController = app.navigationVC;
 }
 - (void)didReceiveMemoryWarning {

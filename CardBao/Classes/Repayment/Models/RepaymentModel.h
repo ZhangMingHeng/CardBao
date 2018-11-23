@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *interest;
 
 // 手续费
-@property (nonatomic, strong) NSString *servicecharge;
+@property (nonatomic, strong) NSString *serviceCharge;
 
 // 违约金
 @property (nonatomic, strong) NSString *damage;

@@ -70,6 +70,8 @@
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 位置数据
+    longitude = @"";
+    latitude  = @"";
     [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
         if (code == 0) {
             self->longitude   = result[@"longitude"]; // 经度
@@ -85,7 +87,6 @@
     CreditExtensionMainVC *viewC = self.navigationController.viewControllers.lastObject;
     viewC.title = @"身份认证";
     viewC.stepLabel.text = @"2/4";
-    
     
     // tableView
     listTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
@@ -334,83 +335,100 @@
 -(void)requestIdCardInfoAndContactInfo:(UIButton*)sender {
     // 上传身份证信息和通讯录信息
     sender.userInteractionEnabled = NO;
-    // 创建组任务
-    dispatch_group_t group = dispatch_group_create();
-    // 并发执行异步任务（任务是并发执行的）
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0); // 全局队列
+//    // 创建组任务
+//    dispatch_group_t group = dispatch_group_create();
+//    // 并发执行异步任务（任务是并发执行的）
+//    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0); // 全局队列
+////
+//    dispatch_group_enter(group);
+//    dispatch_group_async(group, queue, ^{
+//    });
+////
+//    dispatch_group_enter(group);
+//    dispatch_group_async(group, queue, ^{
+//    });
+////
+//    dispatch_group_notify(group, queue, ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
 //
-    dispatch_group_enter(group);
-    dispatch_group_async(group, queue, ^{
-//          imageType:类型 communication:通讯录数据
-        if (self->contactDic.count==0) {
-            [Helper alertMessage:@"获取通讯录失败" addToView:self.view];
-            return ;
-        }
-        NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self->contactDic options:NSJSONWritingPrettyPrinted error:&error];
-        NSString *jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
-        NSDictionary *parameters = @{@"imageType":@"12",
-                                     @"communication":jsonString};
-        [[RequestManager shareInstance] postWithURL:FILEUPLOAD_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-
-            dispatch_group_leave(group);
-
-        } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            sender.userInteractionEnabled = YES;
-        } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            sender.userInteractionEnabled = YES;
-        } isCache:NO];
-
-    });
+//        });
 //
-    dispatch_group_enter(group);
-    dispatch_group_async(group, queue, ^{
-        // deviceId: 设备Id   IMEI：imei   ip：IP地址 longiTude:经度 latiTude: 纬度  gpsCity: 城市
-        // wifiMac:  wifimac  phoneModel: 手机型号  operationSys:操作系统 gpsProvince: 省份
-        NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"equipmentInfo":@{@"deviceId":[[[UIDevice currentDevice] identifierForVendor] UUIDString],
-                                                                                        @"IDFA":[[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString],
-                                                                                        @"phoneModel":[UIDevice currentDevice].model,
-                                                                                        @"operationSys":[UIDevice currentDevice].systemName,
-                                                                                        @"longiTude":self->longitude,
-                                                                                        @"latiTude":self->latitude,
-                                                                                        @"ip":self->ipAddress,
-                                                                                        @"gpsProvince":self->gpsProvince,
-                                                                                        @"gpsCity":self->gpsCity}} options:NSJSONWritingPrettyPrinted error:&error];
-        NSString *jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
-        
-        // 保存 idCardNo:身份号码 username：姓名  chanlRiskinfo: 设备信息
-        NSDictionary *parameters = @{@"idCardNo":self.identityModel.userIDCardNumber,
-                                     @"username":self.identityModel.userIDCardName,
-                                     @"chanlRiskinfo":jsonString};
-        [[RequestManager shareInstance] postWithURL:SAVEIDCARDINFO_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            dispatch_group_leave(group);
-        } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            sender.userInteractionEnabled = YES;
-        } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-            sender.userInteractionEnabled = YES;
-        } isCache:NO];
-
-    });
-//
-    dispatch_group_notify(group, queue, ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // UI线程
-            sender.userInteractionEnabled = YES;
-//            BingBankCardVC *basicVC = [BingBankCardVC new];
-//            basicVC.userName        = self.identityModel.userIDCardName;
-//            basicVC.idCardNo        = self.identityModel.userIDCardNumber;
-//            [self addChildViewController:basicVC];
-//            self.childViewControllers[0].view.frame = self.view.bounds;
-//            [self.view addSubview:basicVC.view];
-            
-            BasicInfoVC *basicVC = [BasicInfoVC new];
-            [self addChildViewController:basicVC];
-            self.childViewControllers[0].view.frame = self.view.bounds;
-            [self.view addSubview:basicVC.view];
-        });
-        
-    });
+//    });
+    //          imageType:类型 communication:通讯录数据
+    if (self->contactDic.count==0) {
+        [Helper alertMessage:@"获取通讯录失败" addToView:self.view];
+        return ;
+    }
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self->contactDic options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSDictionary *parameters = @{@"imageType":@"12",
+                                 @"communication":jsonString};
+    [[RequestManager shareInstance] postWithURL:FILEUPLOAD_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        [self requestIdCard:sender];
+    } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        sender.userInteractionEnabled = YES;
+    } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        sender.userInteractionEnabled = YES;
+    } isCache:NO];
+    
+    
+}
+-(void)requestIdCard:(UIButton*) sender{
+    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+        sender.userInteractionEnabled = YES;
+        // 定位
+        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+            if (code == 0) {
+                self->longitude   = result[@"longitude"]; // 经度
+                self->latitude    = result[@"latitude"]; // 纬度
+                self->gpsCity     = [Helper isNullToString:result[@"gpsCity"] returnString:@"未知"]; // 城市
+                self->gpsProvince = [Helper isNullToString:result[@"gpsProvince"] returnString:@"未知"];// 省份
+            }
+        }];
+        return;
+    }
+    
+    // deviceId: 设备Id   IMEI：imei   ip：IP地址 longiTude:经度 latiTude: 纬度  gpsCity: 城市
+    // wifiMac:  wifimac  phoneModel: 手机型号  operationSys:操作系统 gpsProvince: 省份
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:@{@"equipmentInfo":@{@"deviceId":[[[UIDevice currentDevice] identifierForVendor] UUIDString],
+                                                                                    @"IDFA":[[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString],
+                                                                                    @"phoneModel":[UIDevice currentDevice].model,
+                                                                                    @"operationSys":[UIDevice currentDevice].systemName,
+                                                                                    @"longiTude":self->longitude,
+                                                                                    @"latiTude":self->latitude,
+                                                                                    @"ip":self->ipAddress,
+                                                                                    @"gpsProvince":self->gpsProvince,
+                                                                                    @"gpsCity":self->gpsCity}} options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    // 保存 idCardNo:身份号码 username：姓名  chanlRiskinfo: 设备信息
+    NSDictionary *parameters = @{@"idCardNo":self.identityModel.userIDCardNumber,
+                                 @"username":self.identityModel.userIDCardName,
+                                 @"chanlRiskinfo":jsonString};
+    [[RequestManager shareInstance] postWithURL:SAVEIDCARDINFO_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        sender.userInteractionEnabled = YES;
+        [self pushView];
+    } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        sender.userInteractionEnabled = YES;
+    } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
+        sender.userInteractionEnabled = YES;
+    } isCache:NO];
+}
+-(void)pushView {
+    // UI线程
+    //            BingBankCardVC *basicVC = [BingBankCardVC new];
+    //            basicVC.userName        = self.identityModel.userIDCardName;
+    //            basicVC.idCardNo        = self.identityModel.userIDCardNumber;
+    //            [self addChildViewController:basicVC];
+    //            self.childViewControllers[0].view.frame = self.view.bounds;
+    //            [self.view addSubview:basicVC.view];
+    
+    BasicInfoVC *basicVC = [BasicInfoVC new];
+    [self addChildViewController:basicVC];
+    self.childViewControllers[0].view.frame = self.view.bounds;
+    [self.view addSubview:basicVC.view];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

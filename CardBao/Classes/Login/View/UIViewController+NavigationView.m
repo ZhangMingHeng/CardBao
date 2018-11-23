@@ -7,9 +7,10 @@
 //
 
 #import "UIViewController+NavigationView.h"
-
 @interface UIViewController (_NSObject)
-
+{
+    
+}
 @end
 
 @implementation UIViewController (NSObject)
@@ -69,6 +70,12 @@
 }
 -(void)backClick:(UIButton*) sender {
     sender.enabled = NO;
+    // 如果是从登录页面过来的就直接设置rootViewController
+    if ([self isKindOfClass:[LoginVC class]]) {
+        AppDelegate *appDele = (AppDelegate*)[UIApplication sharedApplication].delegate;
+        appDele.window.rootViewController = appDele.tabBarVC;
+        return;
+    }
     [self.navigationController popViewControllerAnimated:YES];
 }
 /*

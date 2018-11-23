@@ -27,16 +27,17 @@ static int const BusinessStateQuotaCalculation = 6; // 计算中
 static int const BusinessStateScoreLess        = 7; // 评分不足
 static int const BusinessStateAuthTimeout      = 8; // 授权超时
 static int const BusinessStateAuthSuccess      = 9; // 授权成功
-//static int const BusinessStateBingBankCarding  = 10; // 绑定银行卡认证中
-//static int const BusinessStateIdentitying      = 11; // 身份证认证中
-//static int const BusinessStateBasicInfoing     = 12; // 基本信息认证中
+static int const BusinessStateBingBankCarding  = 10; // 绑定银行卡认证中
+static int const BusinessStateIdentitying      = 11; // 身份证认证中
+static int const BusinessStateBasicInfoing     = 12; // 基本信息认证中
 //static int const BusinessStateOperatoring      = 13; // 运营商认证中
 
-@interface LoanVC ()<UITableViewDelegate,UITableViewDataSource,YJBannerViewDataSource, YJBannerViewDelegate>
+@interface LoanVC ()<UITableViewDelegate,UITableViewDataSource,YJBannerViewDataSource,YJBannerViewDelegate>
 {
     BOOL isUpDate;
     NSMutableArray *hornArray;
     TextLoopView *loopView;
+    AppDelegate *app;
 }
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, copy) LoanModel *loanModel;
@@ -47,16 +48,18 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    app = (AppDelegate*)[UIApplication sharedApplication].delegate;
     hornArray = [NSMutableArray new];
   
     [self getUI];
-    [self requestData:YES];
+    if (kLoginStatus) [self requestData:YES];
     [self requestHornData];
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (isUpDate) [self requestData:NO];
+    if (isUpDate&&kLoginStatus) [self requestData:NO];
+    
     self->isUpDate = YES;
 }
 #pragma mark requestData
@@ -70,16 +73,13 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         }
 //        self.loanModel.availableCredit = @"1111";
 //        self.loanModel.validityDate = @"2018年11月10日";
-//        self->_loanModel.step = 5;
+//        self->_loanModel.step = 1;
         dispatch_async(dispatch_get_main_queue(), ^{
             // UI线程
             [self.tableView reloadData];
         });
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         [self.tableView.mj_header endRefreshing];
-//        self->_loanModel = [LoanModel yy_modelWithDictionary:model];
-//        self.loanModel.availableCredit = @"1111";
-//        self.loanModel.step = 9;
     } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         [self.tableView.mj_header endRefreshing];
     } isCache:YES];
@@ -126,7 +126,8 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         make.edges.mas_offset(UIEdgeInsetsZero);
     }];
     _tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [self requestData:NO];
+        if (kLoginStatus) [self requestData:NO];
+        else [self.tableView.mj_header endRefreshing];
         [self requestHornData];
     }];
     
@@ -190,7 +191,6 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
     [limitLabel setTitleColor:DYColor(0.0, 145.0, 234.0) forState:UIControlStateNormal];
     [limitLabel setBackgroundImage:[UIImage imageNamed:@"Loan_Background"] forState:UIControlStateNormal];
     [cell.contentView addSubview:limitLabel];
-    
     
     // 备注
     UILabel *remarkLabel      = [UILabel new];
@@ -273,10 +273,35 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
 }
 #pragma mark 获取额度、借款事件
 -(void)getLimitClick:(UIButton*)sender {
+    // 1、判断是否为登录状态
+    // 2、判断用户状态
+    
+    // 是否为登录状态
+    if (!kLoginStatus) {
+        LoginVC *login     = [LoginVC new];
+        login.isAgainLogin = NO;
+        app.navigationVC   = [[DYNavigationController alloc]initWithRootViewController:login];
+        app.window.rootViewController = app.navigationVC;
+        return;
+    }
+    
+    // 状态为进行中不给点击进去 start
+    if (self.loanModel.step == BusinessStateBingBankCarding) {
+        [Helper alertMessage:@"银行卡认证中" addToView:self.view];
+        return;
+    }
+    if (self.loanModel.step == BusinessStateIdentitying) {
+        [Helper alertMessage:@"身份认证中" addToView:self.view];
+        return;
+    }
+    if (self.loanModel.step == BusinessStateBasicInfoing) {
+        [Helper alertMessage:@"基本信息认证中" addToView:self.view];
+        return;
+    }
+    // 进行中不给点击进去 end
     
     if (self.loanModel.step == BusinessStateAuthSuccess) {
         // 已授权成功
-        
         // 小于1000元不给申请借款
         if ([[Helper isNullToString:self.loanModel.availableCredit returnString:@0] intValue] < 1000) {
             [Helper alertMessage:@"可用额度低于1000，暂无法申请借款" addToView:self.view];
@@ -285,10 +310,9 @@ static int const BusinessStateAuthSuccess      = 9; // 授权成功
         // 申请借款
         ApplyLoanVC *applyVC = [ApplyLoanVC new];
         [self.navigationController pushViewController:applyVC animated:YES];
-        
         return;
     }
-    
+
     CreditExtensionMainVC *creditVC = [CreditExtensionMainVC new];
     creditVC.creditNo               = [Helper isNullToString:kCREDITNO returnString:@""];
     

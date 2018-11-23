@@ -85,12 +85,12 @@
 - (void)showAlertView{
     
     UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"请授权定位权限"
-                                          message:@"请在iPhone的\"设置-隐私-定位服务\"选项中,允许App访问位置信息"
+                                          alertControllerWithTitle:@"授权访问定位服务"
+                                          message:@"请点击“允许”以允许访问,借款需要提供您的地理位置信息，若不允许，您将无法发送地理位置进行申请借款"
                                           preferredStyle: UIAlertControllerStyleAlert];
     
     UIAlertAction *OKAction = [UIAlertAction actionWithTitle:@"允许" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self.parentViewController.navigationController popViewControllerAnimated:YES];
+//        [self.parentViewController.navigationController popViewControllerAnimated:YES];
         NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
         if([[UIApplication sharedApplication] openURL:url]) {
             [[UIApplication sharedApplication] openURL:url];
@@ -98,7 +98,7 @@
     }];
     [alertController addAction:OKAction];
     [alertController addAction:[UIAlertAction actionWithTitle:@"不允许" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        [self.parentViewController.navigationController popViewControllerAnimated:YES];
+//        [self.parentViewController.navigationController popViewControllerAnimated:YES];
     }]];
     [self.parentViewController presentViewController:alertController animated:YES completion:nil];
 }

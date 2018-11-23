@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TabBarViewController.h"
 #import "DYNavigationController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, strong) TabBarViewController *tabBarVC;
 @property (strong, nonatomic) DYNavigationController *navigationVC;
 @property (strong, nonatomic) NSString *appURL;
 

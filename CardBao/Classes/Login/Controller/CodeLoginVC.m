@@ -19,8 +19,8 @@
     UIButton *codeButton;
     AppDelegate *appDele;
     CGFloat statusHeight; // 状态栏高度
-    NSString *latitude; // 纬度
-    NSString *longitude; // 经度
+//    NSString *latitude; // 纬度
+//    NSString *longitude; // 经度
     NSString *ipAddress;
 }
 @property (nonatomic, assign) int countDown;
@@ -36,20 +36,19 @@
     [self getStatusHeight];
     [self getUI];
     [self getDeviceInfo];
-    
 }
 -(void)getDeviceInfo {
-    longitude = @"";
-    latitude  = @"";
+//    longitude = @"";
+//    latitude  = @"";
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 定位
-    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
-        if (code == 0) {
-            self->longitude   = result[@"longitude"]; // 经度
-            self->latitude    = result[@"latitude"]; // 纬度
-        }
-    }];
+//    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//        if (code == 0) {
+//            self->longitude   = result[@"longitude"]; // 经度
+//            self->latitude    = result[@"latitude"]; // 纬度
+//        }
+//    }];
 }
 -(void)getStatusHeight {
     CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
@@ -221,10 +220,16 @@
         [Helper alertMessage:@"请输入正确的验证码" addToView:self.view];
         return;
     }
-    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
-        [Helper alertMessage:@"请允许授权定位权限" addToView:self.view];
-        return;
-    }
+//    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+//        // 定位
+//        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//            if (code == 0) {
+//                self->longitude   = result[@"longitude"]; // 经度
+//                self->latitude    = result[@"latitude"]; // 纬度
+//            }
+//        }];
+//        return;
+//    }
     
     // 取消第一响应者
     [Helper resignTheFirstResponder];
@@ -236,8 +241,8 @@
                                  @"eventType":@"02",
                                  @"equipNo":[[[UIDevice currentDevice] identifierForVendor] UUIDString],
                                  @"ip":ipAddress,
-                                 @"longitude":longitude,
-                                 @"latitude":latitude};
+                                 @"longitude":self.longitude,
+                                 @"latitude":self.latitude};
     [[RequestManager shareInstance]postWithURL:CODELOGIN_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         NSDictionary *dic = model;
         
@@ -247,7 +252,8 @@
                 INPUTTOKEN(dic[@"token"]);
                 INPUTLoginState(YES);
                 INPUTUserPHONE(self->phoneText.text);
-                self->appDele.window.rootViewController = [TabBarViewController new];
+                if(self.isAgainLogin) self->appDele.window.rootViewController = [TabBarViewController new];
+                else self->appDele.window.rootViewController = self->appDele.tabBarVC;
                 return ;
             }
         }

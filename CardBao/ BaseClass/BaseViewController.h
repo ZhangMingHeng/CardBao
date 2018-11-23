@@ -10,4 +10,7 @@
 
 @interface BaseViewController : UIViewController
 
+// 是否再次登录 ，默认否
+@property (nonatomic,assign) BOOL isAgainLogin;
+
 @end

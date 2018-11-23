@@ -100,6 +100,8 @@
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 位置数据
+    longitude = @"";
+    latitude  = @"";
     [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
         if (code == 0) {
             self->longitude   = result[@"longitude"]; // 经度
@@ -337,6 +339,18 @@
 #pragma mark 获取验证码
 -(void)getCode {
     
+    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+        // 定位
+        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+            if (code == 0) {
+                self->longitude   = result[@"longitude"]; // 经度
+                self->latitude    = result[@"latitude"]; // 纬度
+                self->gpsCity     = [Helper isNullToString:result[@"gpsCity"] returnString:@"未知"]; // 城市
+                self->gpsProvince = [Helper isNullToString:result[@"gpsProvince"] returnString:@"未知"];// 省份
+            }
+        }];
+        return;
+    }
     // deviceId: 设备Id   IMEI：imei   ip：IP地址 longiTude:经度 latiTude: 纬度  gpsCity: 城市
     // wifiMac:  wifimac  phoneModel: 手机型号  operationSys:操作系统 gpsProvince: 省份
     NSError *error;
@@ -358,7 +372,7 @@
                                  @"loanOfUse":applyModel.loanOfUseNum,
                                  @"chanlRiskinfo":jsonString};
     [[RequestManager shareInstance]postWithURL:LOANGETCODE_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
-        
+        [Helper alertMessage:@"发送成功" addToView:self.view];
     } andWithWarn:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
     } andWithFaile:^(RequestManager * _Nonnull manage, id  _Nonnull model) {

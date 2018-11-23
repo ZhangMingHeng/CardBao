@@ -6,9 +6,7 @@
 //  Copyright © 2018 andy_zhang. All rights reserved.
 //
 
-#import "LoginVC.h"
 #import "AppDelegate.h"
-#import "TabBarViewController.h"
 #import <AFNetworkActivityIndicatorManager.h>
 
 @interface AppDelegate ()
@@ -25,18 +23,19 @@
     
     // 如果环境接口变了话也转入登录页面重新获取数据
     if (![kINTERFACE isEqualToString:[NSString stringWithFormat:@"%@",Host_And_Port]]) INPUTLoginState(NO);
-    INPUTINTERFACE(Host_And_Port); //存储主接口
+        INPUTINTERFACE(Host_And_Port); //存储主接口
     
     //    判断登录状态
-    if (kLoginStatus) {
+//    if (kLoginStatus) {
         // 进入主页面
-        self.window.rootViewController = [TabBarViewController new];
-    } else {
-        // 进入登录页面
-        self.navigationVC = [[DYNavigationController alloc]initWithRootViewController: [LoginVC new]];
-        self.window.rootViewController = self.navigationVC;
-    }
-    
+        _tabBarVC = [TabBarViewController new];
+        self.window.rootViewController = _tabBarVC;
+//    } else {
+//        // 进入登录页面
+//        self.navigationVC = [[DYNavigationController alloc]initWithRootViewController: [LoginVC new]];
+//        self.window.rootViewController = self.navigationVC;
+//    }
+//
     
     //***************    腾讯BuglySDK start    ***************//
     
@@ -46,14 +45,6 @@
     [Bugly startWithAppId:BUGLYAPPID developmentDevice:YES config:config];
     
     //***************    腾讯BuglySDK end    ***************//
-    
-    
-    //***************    定位 start    ***************//
-    [[LocationManager shareInstance] requestLocation:(UIViewController*)self.window resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
-        if (code == 0) {
-        }
-    }];
-    //***************    定位 end     ***************//
 
     // 设置Window为主窗口并显示出来
     [self.window makeKeyAndVisible];
@@ -63,7 +54,7 @@
     return YES;
 }
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
-    NSLog(@"url : %@", url.absoluteString);
+    NSLog(@"URL Scheme: %@", url.absoluteString);
     self.appURL = url.absoluteString;
     return YES;
 }

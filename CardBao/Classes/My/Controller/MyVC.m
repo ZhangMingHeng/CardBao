@@ -32,16 +32,20 @@
     // Do any additional setup after loading the view.
     [self getLocalData];
     [self getUI];
-    [self requestData];
+    if (isUpDate&&kLoginStatus) [self requestData];
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (isUpDate) [self requestData];
+    if (isUpDate&&kLoginStatus) [self requestData];
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         self->isUpDate = YES;
     });
+}
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
 }
 #pragma mark RequestData
 -(void)requestData {
@@ -171,9 +175,11 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section > 0) {
+    
         ViewCArray = @[@[@""],@[[ApplyRecordVC new]],@[[RepaymentVC new],[MyBankCardVC new],[HelperCenterVC new]],@[[SettingVC new]],];
         //2 申请记录//3 我要还款//4 我的银行卡//5 帮助中心//6 设置
         [self.navigationController pushViewController:ViewCArray[indexPath.section][indexPath.row] animated:YES];
+        
     }
 }
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {

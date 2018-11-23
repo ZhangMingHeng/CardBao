@@ -18,8 +18,8 @@
     UIButton *selectButton;
     AppDelegate *appDele;
     CGFloat statusHeight; // 状态栏高度
-    NSString *latitude; // 纬度
-    NSString *longitude; // 经度
+//    NSString *latitude; // 纬度
+//    NSString *longitude; // 经度
     NSString *ipAddress;
 }
 @property (nonatomic, assign) int countDown;
@@ -38,17 +38,17 @@
     
 }
 -(void)getDeviceInfo {
-    longitude = @"";
-    latitude  = @"";
+//    longitude = @"";
+//    latitude  = @"";
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 定位
-    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
-        if (code == 0) {
-            self->longitude = result[@"longitude"]; // 经度
-            self->latitude  = result[@"latitude"]; // 纬度
-        }
-    }];
+//    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//        if (code == 0) {
+//            self->longitude = result[@"longitude"]; // 经度
+//            self->latitude  = result[@"latitude"]; // 纬度
+//        }
+//    }];
 }
 -(void)getStatusHeight {
     CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
@@ -224,10 +224,16 @@
         [Helper alertMessage:@"必须勾选注册协议才可以注册" addToView:self.view];
         return;
     }
-    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
-        [Helper alertMessage:@"请允许授权定位权限" addToView:self.view];
-        return;
-    }
+//    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+//        // 定位
+//        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//            if (code == 0) {
+//                self->longitude   = result[@"longitude"]; // 经度
+//                self->latitude    = result[@"latitude"]; // 纬度
+//            }
+//        }];
+//        return;
+//    }
     [Helper resignTheFirstResponder];// 取消响应者
     sender.enabled = NO;
     //vCode：验证码； account：账号； password：密码
@@ -238,8 +244,8 @@
                                  @"eventType":@"01",
                                  @"equipNo":[[[UIDevice currentDevice] identifierForVendor] UUIDString],
                                  @"ip":ipAddress,
-                                 @"longitude":longitude,
-                                 @"latitude":latitude} ;
+                                 @"longitude":self.longitude,
+                                 @"latitude":self.latitude} ;
     [[RequestManager shareInstance]postWithURL:REGISTER_INTERFACE parameters:parameters isLoading:YES loadTitle:nil addLoadToView:self.view andWithSuccess:^(RequestManager * _Nonnull manage, id  _Nonnull model) {
         
         NSDictionary *dic = model;

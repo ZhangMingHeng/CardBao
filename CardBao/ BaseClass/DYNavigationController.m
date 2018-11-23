@@ -41,26 +41,22 @@
     [self.navigationBar setBarTintColor:[UIColor colorWithRed:42.0/255.0 green:113.0/255.0 blue:241.0/255.0 alpha:1]]; // 背景色
     [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}]; // title字體色
     self.navigationBar.translucent = NO; // 半透明色
-    
-//    [[UINavigationBar appearance] setBackgroundImage:[UIImage new] forBarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
-//    [[UINavigationBar appearance] setShadowImage:[UIImage new]];
 
 }
-///重写push方法 push的控制器隐藏tabbar
+//重写push方法 push的控制器隐藏tabbar
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    
     // 判断首页没有返回按钮
     NSArray *vc = self.viewControllers;
     if (vc.count > 0) {
         //     隐藏tabbar
-        viewController.hidesBottomBarWhenPushed =YES;
-        
+        viewController.hidesBottomBarWhenPushed = YES;
+
         //    1.添加后退按钮
         [self addBackButton:viewController];
     }
-    
     [super pushViewController:viewController animated:animated];
+
 }
 //2 自定义后退按钮
 - (void)addBackButton:(UIViewController *)viewController {

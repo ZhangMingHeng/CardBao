@@ -13,7 +13,7 @@
 #import "ForgetPasswordVC.h"
 #import "TabBarViewController.h"
 
-@interface LoginVC ()
+@interface LoginVC ()<UIGestureRecognizerDelegate>
 {
     UITextField *phoneText;
     UITextField *passwordText;
@@ -23,6 +23,7 @@
     NSString *longitude; // 经度
     NSString *ipAddress;
 }
+@property (nonatomic, assign) BOOL isCanBack;
 @end
 
 @implementation LoginVC
@@ -42,12 +43,12 @@
     // IP数据
     ipAddress = [Helper isNullToString:[Helper deviceWANIPAddress] returnString:@"192.168.1.1"];
     // 定位
-    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
-        if (code == 0) {
-            self->longitude   = result[@"longitude"]; // 经度
-            self->latitude    = result[@"latitude"]; // 纬度
-        }
-    }];
+//    [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//        if (code == 0) {
+//            self->longitude   = result[@"longitude"]; // 经度
+//            self->latitude    = result[@"latitude"]; // 纬度
+//        }
+//    }];
 }
 -(void)getStatusHeight {
     CGRect statusRect = [[UIApplication sharedApplication] statusBarFrame];
@@ -56,6 +57,34 @@
     
     statusHeight = statusRect.size.height + navRect.size.height;
 }
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self forbiddenSideBack];
+}
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    [self resetSideBack];
+}
+#pragma mark -- 禁用边缘返回
+-(void)forbiddenSideBack{
+    self.isCanBack = NO;
+    //关闭ios右滑返回
+    if([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.delegate=self;
+    }
+}
+#pragma mark --恢复边缘返回
+- (void)resetSideBack {
+    self.isCanBack=YES;
+    //开启ios右滑返回
+    if([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.delegate = nil;
+    }
+}
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return self.isCanBack;
+}
+
 #pragma mark GetUI
 -(void)getUI {
     self.title = @"登 录";
@@ -67,7 +96,7 @@
     backgroundImg.contentMode  = UIViewContentModeScaleAspectFill;
     [self.view addSubview:backgroundImg];
     // 自定义导航栏
-    [self setNavigationViewTitle:@"登 录" hiddenBackButton:YES backgroundColor:nil];
+    [self setNavigationViewTitle:@"登 录" hiddenBackButton:self.isAgainLogin backgroundColor:nil];
     
     // 背景框
     UIView *boardView             = [[UIView alloc] init];
@@ -220,10 +249,16 @@
         [Helper alertMessage:@"密码不能为空" addToView:self.view];
         return;
     }
-    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
-        [Helper alertMessage:@"请允许授权定位权限" addToView:self.view];
-        return;
-    }
+//    if (!longitude||!latitude||[longitude isEqualToString:@""]||[latitude isEqualToString:@""]) {
+//        // 定位
+//        [[LocationManager shareInstance] requestLocation:self resultBlock:^(LocationManager * _Nonnull manage, NSInteger code, NSDictionary * _Nonnull result) {
+//            if (code == 0) {
+//                self->longitude   = result[@"longitude"]; // 经度
+//                self->latitude    = result[@"latitude"]; // 纬度
+//            }
+//        }];
+//        return;
+//    }
     sender.enabled = NO;
     // "password": 密码； "account":账号
     NSDictionary *parameters = @{@"account":phoneText.text,
@@ -241,7 +276,8 @@
                 INPUTTOKEN(dic[@"token"]);
                 INPUTLoginState(YES);
                 INPUTUserPHONE(self->phoneText.text);
-                self->appDele.window.rootViewController = [TabBarViewController new];
+                if(self.isAgainLogin) self->appDele.window.rootViewController = [TabBarViewController new];
+                else self->appDele.window.rootViewController = self->appDele.tabBarVC;
                 return ;
             }
         }
@@ -257,11 +293,17 @@
 }
 #pragma mark 跳转验证码登录页面
 -(void)yanLogin:(UIButton*) sender {
-    [self.navigationController pushViewController:[CodeLoginVC new] animated:YES];
+    CodeLoginVC *codeLVC = [CodeLoginVC new];
+    codeLVC.latitude     = latitude;
+    codeLVC.longitude    = longitude;
+    [self.navigationController pushViewController:codeLVC animated:YES];
 }
 #pragma mark 跳转注册页面
 -(void)registerClick:(UIButton*)sender {
-    [self.navigationController pushViewController:[RegisterVC new] animated:YES];
+    RegisterVC *codeLVC =  [RegisterVC new];
+    codeLVC.latitude    = latitude;
+    codeLVC.longitude   = longitude;
+    [self.navigationController pushViewController:codeLVC animated:YES];
 }
 #pragma mark 跳转忘记密码页面
 -(void)forgetClick:(UIButton*)sender {
